@@ -27,7 +27,13 @@ public class PlayScreen extends GameScreen {
 
     @Override
     public void draw(float delta) {
+        stage.act(Gdx.graphics.getDeltaTime());
 
+        stage.getBatch().begin();
+        stage.getBatch().draw(bg, 0, 0, 1366, 720);
+        stage.getBatch().end();
+
+        stage.draw();
     }
 
     @Override
