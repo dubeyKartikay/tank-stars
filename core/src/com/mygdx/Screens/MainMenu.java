@@ -4,8 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.Game;
 
@@ -17,10 +19,9 @@ public class MainMenu extends GameScreen {
     TextButton playButton;
     TextButton loadButton;
     TextButton exitButton;
-    public MainMenu(Game game) {
+    public MainMenu(final Game game) {
         super(game);
         stage = new Stage(new ScreenViewport());
-
         table = new Table();
         Gdx.input.setInputProcessor(stage);
         batch = new SpriteBatch();
@@ -29,9 +30,18 @@ public class MainMenu extends GameScreen {
         playButton = new TextButton("Play",mySkin);
         loadButton = new TextButton("Load",mySkin);
         exitButton = new TextButton("exit",mySkin);
+
         playButton.getLabel().setFontScale(3);
+        playButton.addListener( new ClickListener(){
+            @Override
+            public void clicked (InputEvent event,float x,float y){
+                game.setCurrScreen( new TankSelect(game) );
+            }
+        });
         loadButton.getLabel().setFontScale(3);
+
         exitButton.getLabel().setFontScale(3);
+
         table.setFillParent(true);
         table.setZIndex(0);
         stage.addActor(table);
