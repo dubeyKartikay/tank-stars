@@ -23,6 +23,10 @@ public class Game  {
             bgMusic.pause();
         }
     }
+
+    public boolean isMusicPlaying(){
+        return bgMusic.isPlaying();
+    }
     public void render(){
         currScreen.render(Gdx.graphics.getDeltaTime());
     }

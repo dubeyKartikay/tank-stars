@@ -14,15 +14,14 @@ import com.mygdx.game.Game;
 public class MainMenu extends GameScreen {
     SpriteBatch batch;
     Texture img;
-    private Stage stage;
-    private Table table;
+    private final Stage stage;
     TextButton playButton;
     TextButton loadButton;
     TextButton exitButton;
     public MainMenu(final Game game) {
         super(game);
         stage = new Stage(new ScreenViewport());
-        table = new Table();
+        Table table = new Table();
         Gdx.input.setInputProcessor(stage);
         batch = new SpriteBatch();
         img = new Texture("badlogic.jpg");
