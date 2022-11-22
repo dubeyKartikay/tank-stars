@@ -2,14 +2,17 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.mygdx.Screens.GameScreen;
+import com.mygdx.Screens.LoadingScreen;
 import com.mygdx.Screens.MainMenu;
 
 public class Game  {
     private Music bgMusic;
     GameScreen currScreen;
+
     Game(){
         bgMusic  = Gdx.audio.newMusic(Gdx.files.internal("Music/lofiINI.wav"));
-        currScreen = new MainMenu(this);
+        currScreen = new LoadingScreen(this);
+
 
     }
 

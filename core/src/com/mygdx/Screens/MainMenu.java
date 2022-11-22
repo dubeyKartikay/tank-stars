@@ -37,9 +37,22 @@ public class MainMenu extends GameScreen {
                 game.setCurrScreen( new TankSelect(game) );
             }
         });
+        loadButton.addListener( new ClickListener(){
+            @Override
+            public void clicked (InputEvent event,float x,float y){
+                game.setCurrScreen( new LoadScreen(game) );
+            }
+        });
         loadButton.getLabel().setFontScale(3);
 
         exitButton.getLabel().setFontScale(3);
+
+        exitButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                     Gdx.app.exit();
+            }
+        });
 
         table.setFillParent(true);
         table.setZIndex(0);
