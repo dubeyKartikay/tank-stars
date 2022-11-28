@@ -15,8 +15,6 @@ public class  Game  {
     Game(){
         bgMusic  = Gdx.audio.newMusic(Gdx.files.internal("Music/lofiINI.wav"));
         currScreen = new LoadingScreen(this);
-
-
     }
 
     public void playMusic(){
