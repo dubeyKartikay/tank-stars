@@ -16,7 +16,6 @@ import com.mygdx.game.Game;
 public class LoadScreen extends GameScreen{
     SpriteBatch batch;
     Texture img;
-    private Stage stage;
     private Table table;
     TextButton slot1;
     TextButton slot2;

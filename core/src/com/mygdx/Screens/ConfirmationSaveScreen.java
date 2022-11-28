@@ -21,7 +21,6 @@ public class ConfirmationSaveScreen extends GameScreen{
     TextButton ask;
     SpriteBatch batch;
     Texture img;
-    private Stage stage;
     private Table table;
     private BitmapFont font;
     ConfirmationSaveScreen(Game game) {

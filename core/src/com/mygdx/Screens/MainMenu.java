@@ -14,7 +14,6 @@ import com.mygdx.game.Game;
 public class MainMenu extends GameScreen {
     SpriteBatch batch;
     Texture img;
-    private final Stage stage;
     TextButton playButton;
     TextButton loadButton;
     TextButton exitButton;

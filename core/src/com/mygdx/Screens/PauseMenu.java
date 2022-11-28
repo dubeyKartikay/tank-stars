@@ -18,7 +18,6 @@ import com.mygdx.game.Game;
 public class PauseMenu extends GameScreen{
     SpriteBatch batch;
     Texture img;
-    private Stage stage;
     private Table table;
     TextButton resumeButton;
     TextButton musicButton;
@@ -48,7 +47,8 @@ public class PauseMenu extends GameScreen{
         resumeButton.addListener( new ClickListener(){
             @Override
             public void clicked (InputEvent event, float x, float y){
-                getGame().setCurrScreen( new PlayScreen(getGame()) );
+                getGame().setPaused(false);
+//                getGame().destroyOverlay();
             }
         });
         stage.addListener(new InputListener()
@@ -57,7 +57,8 @@ public class PauseMenu extends GameScreen{
             public boolean keyDown(InputEvent event, int keycode)
             {
                 if (keycode == 111){
-                    getGame().setCurrScreen(new PlayScreen(getGame()));
+                    getGame().setPaused(false);
+//                    getGame().destroyOverlay();
                 }
                 return false;
             }
@@ -85,7 +86,7 @@ public class PauseMenu extends GameScreen{
         saveButton.addListener( new ClickListener(){
             @Override
             public void clicked (InputEvent event, float x, float y){
-                getGame().setCurrScreen( new SaveScreen(getGame()) );
+                getGame().setOverlayScreen( new SaveScreen(getGame()) );
             }
         });
 

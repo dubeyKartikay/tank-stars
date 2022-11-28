@@ -17,7 +17,6 @@ import com.mygdx.game.Game;
 import sun.tools.jconsole.Tab;
 
 public class TankSelect extends GameScreen{
-    Stage stage;
 
     Table table;
     Texture bg;
@@ -38,7 +37,7 @@ public class TankSelect extends GameScreen{
 
     TankSelect(Game game){
         super(game);
-        bg = new Texture(Gdx.files.internal("img/zoro.png"));
+        bg = new Texture(Gdx.files.internal("img/tanksel.png"));
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
         currPlayer1Tank = new Image( new Texture(Gdx.files.internal("img/tanks/"+currPlayer1TankInd+".png")) );

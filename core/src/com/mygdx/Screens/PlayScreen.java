@@ -20,7 +20,6 @@ import java.awt.*;
 
 public class PlayScreen extends GameScreen {
     Label label;
-    private Stage stage;
     private Table table;
     private ProgressBar player1Health;
     private ProgressBar player2Health;
@@ -57,7 +56,9 @@ public class PlayScreen extends GameScreen {
             public boolean keyDown(InputEvent event, int keycode)
             {
                 if (keycode == 111){
-                    getGame().setCurrScreen(new PauseMenu(getGame()));
+                    System.out.println("HERE");
+                    getGame().setPaused(true);
+                    getGame().setOverlayScreen(new PauseMenu(getGame()));
                 }
                 return false;
             }
@@ -66,7 +67,8 @@ public class PlayScreen extends GameScreen {
         pauseButton.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                getGame().setCurrScreen(new PauseMenu(getGame()));
+                getGame().setPaused(true);
+                getGame().setOverlayScreen(new PauseMenu(getGame()));
             }
         });
         Texture power = new Texture(Gdx.files.internal("img/power/maxresdefault.jpg"));
@@ -131,13 +133,21 @@ public class PlayScreen extends GameScreen {
         label.setPosition(100,100);
     }
 
+
     @Override
     public void update(float delta) {
+        try {
 
+//        Thread.sleep(500);
+        System.out.println("Update");
+        }catch (Exception e){
+            System.out.println(e);
+        }
     }
 
     @Override
     public void draw(float delta) {
+
         stage.act(Gdx.graphics.getDeltaTime());
 
         stage.getBatch().begin();

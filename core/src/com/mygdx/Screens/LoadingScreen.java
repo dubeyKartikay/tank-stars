@@ -14,7 +14,8 @@ import com.mygdx.game.Game;
 public class LoadingScreen extends GameScreen{
     SpriteBatch batch;
     Texture img;
-    private Stage stage;
+
+    ProgressBar p;
 
     public LoadingScreen(Game game) {
         super(game);

@@ -1,10 +1,14 @@
 package com.mygdx.Screens;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.mygdx.game.Game;
 
 public abstract class GameScreen implements Screen {
     private Game game;
+
+    protected Stage stage;
     GameScreen(Game game){
         this.game = game;
     }
@@ -46,5 +50,9 @@ public abstract class GameScreen implements Screen {
 
     public Game getGame() {
         return game;
+    }
+    public void setThisAsInputStream(){
+        Gdx.input.setInputProcessor(stage);
+
     }
 }

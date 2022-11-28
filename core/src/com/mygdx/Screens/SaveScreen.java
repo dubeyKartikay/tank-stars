@@ -16,7 +16,6 @@ import com.mygdx.game.Game;
 public class SaveScreen extends GameScreen{
     SpriteBatch batch;
     Texture img;
-    private Stage stage;
     private Table table;
     TextButton slot1;
     TextButton slot2;
@@ -49,7 +48,7 @@ public class SaveScreen extends GameScreen{
         back.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                getGame().setCurrScreen(new PauseMenu(getGame()));
+                getGame().setOverlayScreen(new PauseMenu(getGame()));
             }
         });
         slot1.getLabel().setFontScale(3);
@@ -60,7 +59,7 @@ public class SaveScreen extends GameScreen{
         slot1.addListener( new ClickListener(){
             @Override
             public void clicked (InputEvent event, float x, float y){
-                getGame().setCurrScreen( new ConfirmationSaveScreen(getGame()) );
+                getGame().setOverlayScreen( new ConfirmationSaveScreen(getGame()) );
             }
         });
 
