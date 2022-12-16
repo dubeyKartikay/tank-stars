@@ -31,6 +31,6 @@ public class Tank {
     public void zerofuelOpponentPU(Tank tank){
         tank.setFuel(0);
     }
-    public void refill()
+//    public void refill()
 //    public void
 }

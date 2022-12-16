@@ -70,7 +70,7 @@ public class PowerUps {
     public void setDamagelvl(int damagelvl) {
         this.damagelvl = damagelvl;
     }
-    public int getLvlValue(String str){
+    public int getPlvlValue(String str){
         if(str.equals("SHIELD")){
             return sheildMap.get(this.getSheildlvl());
         }
