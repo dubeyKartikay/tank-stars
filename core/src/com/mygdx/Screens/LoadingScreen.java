@@ -30,7 +30,7 @@ public class LoadingScreen extends GameScreen{
 
     public void update(float delta) {
     if(Gdx.input.justTouched()){
-        getGame().setCurrScreen(new MainMenu(getGame()));
+        getGame().setCurrScreen(new PlayScreen(getGame()));
     }
     }
 
