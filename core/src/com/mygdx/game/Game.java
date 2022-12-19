@@ -12,6 +12,8 @@ public class  Game  {
 
     private GameScreen overlayScreen;
     boolean isPaused = false;
+
+
     Game(){
         bgMusic  = Gdx.audio.newMusic(Gdx.files.internal("Music/lofiINI.wav"));
         currScreen = new LoadingScreen(this);

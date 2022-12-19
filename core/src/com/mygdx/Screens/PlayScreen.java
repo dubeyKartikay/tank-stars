@@ -1,6 +1,7 @@
 package com.mygdx.Screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -14,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.mygdx.game.Game;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.mygdx.game.GameLoop;
 
 import java.awt.*;
 //import java.awt.Label;
@@ -35,8 +37,26 @@ public class PlayScreen extends GameScreen {
     private ImageButton player2power1;
     private ImageButton player2power2;
 
-    PlayScreen(final Game game) {
+    private GameLoop gameLoop;
+
+    private static PlayScreen playScreen;
+
+    public static PlayScreen getInstance(Game game){
+        if (playScreen == null){
+            playScreen = new PlayScreen(game);
+        }
+        return playScreen;
+    }
+
+    public static PlayScreen getInstance(){
+        if (playScreen == null){
+            return null;
+        }
+        return playScreen;
+    }
+    private PlayScreen(final Game game) {
         super(game);
+        gameLoop = GameLoop.getInstance(game);
         stage = new Stage();
         table = new Table();
         table.setFillParent(true);
@@ -131,14 +151,15 @@ public class PlayScreen extends GameScreen {
         label=new Label("sid",mySkin);
         stage.addActor(label);
         label.setPosition(100,100);
+
+
     }
 
 
     @Override
     public void update(float delta) {
         try {
-
-//        Thread.sleep(500);
+        gameLoop.update();
         System.out.println("Update");
         }catch (Exception e){
             System.out.println(e);
@@ -148,18 +169,26 @@ public class PlayScreen extends GameScreen {
     @Override
     public void draw(float delta) {
 
-        stage.act(Gdx.graphics.getDeltaTime());
-
-        stage.getBatch().begin();
-        stage.getBatch().draw(bg, 0, 0, 1366, 720);
-        stage.getBatch().end();
-
-        stage.draw();
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         spriteBatch.begin();
         spriteBatch.draw(timeleft, 1265, 658,100,60); //550 is X and 380 is Y position.
         spriteBatch.end();
+        stage.act(Gdx.graphics.getDeltaTime());
+
+//        stage.getBatch().begin();
+//        stage.getBatch().draw(bg, 0, 0, 1366, 720);
+//        stage.getBatch().end();
+
+        stage.draw();
+        gameLoop.render();
+
     }
 
+    @Override
+    public void dispose(){
+        gameLoop.dispose();
+    }
     @Override
     public boolean isDone() {
         return false;

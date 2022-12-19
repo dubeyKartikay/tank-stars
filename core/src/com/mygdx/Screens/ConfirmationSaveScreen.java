@@ -43,13 +43,13 @@ public class ConfirmationSaveScreen extends GameScreen{
         yes.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                getGame().setCurrScreen(new PauseMenu(getGame()));
+                getGame().setOverlayScreen(new PauseMenu(getGame()));
             }
         });
         no.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                getGame().setCurrScreen(new SaveScreen(getGame()));
+                getGame().setOverlayScreen(new SaveScreen(getGame()));
             }
         });
         table.setFillParent(true);

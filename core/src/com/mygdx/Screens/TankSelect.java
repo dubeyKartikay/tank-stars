@@ -114,7 +114,7 @@ public class TankSelect extends GameScreen{
                 new ClickListener(){
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-                    getGame().setCurrScreen(new PlayScreen(getGame()));
+                    getGame().setCurrScreen(PlayScreen.getInstance(getGame()));
                     }
                 }
         );
