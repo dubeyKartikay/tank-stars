@@ -24,7 +24,7 @@ public class TankSelect extends GameScreen{
     Image currPlayer1Tank;
     Image currPlayer2Tank;
 
-     int currPlayer1TankInd = 0;
+    int currPlayer1TankInd = 0;
     int currPlayer2TankInd = 0;
     TextButton p1l;
     TextButton p1r;
@@ -114,7 +114,9 @@ public class TankSelect extends GameScreen{
                 new ClickListener(){
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-                    getGame().setCurrScreen(new PlayScreen(getGame()));
+                        getGame().getPlayer1().setTankIndex(currPlayer1TankInd);
+                        getGame().getPlayer2().setTankIndex(currPlayer2TankInd);
+                        getGame().setCurrScreen(new PlayScreen(getGame()));
                     }
                 }
         );

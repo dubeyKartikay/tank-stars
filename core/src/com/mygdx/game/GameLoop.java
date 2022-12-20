@@ -145,7 +145,9 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor  {
             sprite1.setSize(14,14);
             tankbody1.setUserData(sprite1);
 
-
+            sprite2=new Sprite(new Texture(Gdx.files.internal("img/tanks/0_leftfacing.png")));
+            sprite2.setSize(14,14);
+            tankbody2.setUserData(sprite2);
             //GROUND
             tank1.type= BodyDef.BodyType.StaticBody;
             tank1.position.set(0,0);
