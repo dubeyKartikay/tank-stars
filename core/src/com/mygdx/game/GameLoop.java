@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.mygdx.Constants;
+import com.mygdx.Screens.PauseMenu;
 
 public class GameLoop {
     Game game;
@@ -54,43 +55,25 @@ public class GameLoop {
         world= new World(new Vector2(0,-10),true);
         debugRenderer= new Box2DDebugRenderer();
         orthographicCamera=new OrthographicCamera((Gdx.graphics.getWidth()/5),Gdx.graphics.getHeight()/5);
-        //BALL
-        BodyDef tank1=new BodyDef();
-        BodyDef tank2= new BodyDef();
 
-        tank1.type= BodyDef.BodyType.DynamicBody;
-        tank2.type=BodyDef.BodyType.DynamicBody;
 
         img=new Texture(Gdx.files.internal("playscreenbg.jpg"));
-//        bg=new Image((img));
+        game.getPlayer1().initTank(world);
+        game.getPlayer2().initTank(world);
 
-        tank1.position.set(-55,8);
-        tank2.position.set(40,9);
+        tankbody1=game.getPlayer1().getTank().getTankBody();
+        tankbody2=game.getPlayer2().getTank().getTankBody();
 
-        CircleShape circleShape= new CircleShape();
-        circleShape.setRadius(2f);
-        FixtureDef fixturetank1=new FixtureDef();
-        FixtureDef fixturetank2=new FixtureDef();
-        fixturetank1.density=2.5f;
-        fixturetank1.friction=.1f; //0 to 1
-        fixturetank1.restitution=0;  //bounce back after dropping to ground 0 to 1 if 1 then jumping infinte times same meter as dropped
-        fixturetank1.shape=circleShape;
-        fixturetank2.shape=circleShape;
-        fixturetank2.restitution=0;
-        fixturetank2.density=2.5f;
-        fixturetank2.friction=.1f;
+        makeGround();
+        player1_cords=tankbody1.getPosition();
+        player2_cords=tankbody2.getPosition();
+    }
 
-
-        tankbody1=world.createBody(tank1);
-        tankbody1.createFixture(fixturetank1);
-        tankbody2=world.createBody(tank2);
-        tankbody2.createFixture(fixturetank2);
-        //GROUND
-        tank1.type= BodyDef.BodyType.StaticBody;
-        tank1.position.set(0,0);
-        final Skin mySkin = new Skin(Gdx.files.internal("skins/placeholderUISkin/uiskin.json"));
-//        slot1 = new TextButton("slot1",mySkin);
-        //shape
+    private void makeGround() {
+        BodyDef ground = new BodyDef();
+        FixtureDef groundFixturedef = new FixtureDef();
+        ground.type= BodyDef.BodyType.StaticBody;
+        ground.position.set(0,0);
         ChainShape chainShape=new ChainShape();
         chainShape.createChain(new Vector2[]{new Vector2(-134,14),
                 new Vector2(-130, 14),
@@ -107,30 +90,45 @@ public class GameLoop {
                 new Vector2(112,-23),
                 new Vector2(148,-23)
         });
-        fixturetank1.shape=chainShape;
-        fixturetank1.friction=.5f;
-        fixturetank1.restitution=0;
+        groundFixturedef.shape=chainShape;
+        groundFixturedef.friction=.5f;
+        groundFixturedef.restitution=0;
 
-        world.createBody(tank1).createFixture(fixturetank1);
-        //BOX
-        tank1.type= BodyDef.BodyType.DynamicBody;
-        tank1.position.set(2.25f,10);
-        player1_cords=tankbody1.getPosition();
-        player2_cords=tankbody2.getPosition();
+        groundBody=world.createBody(ground);
+        groundBody.createFixture(groundFixturedef);
     }
 
     public void update(){
-        System.out.println("updating");
+        handlePause();
+        movement();
     }
+
+    private void handlePause() {
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
+            game.setPaused(true);
+            game.setOverlayScreen(new PauseMenu(game));
+        }
+    }
+
     public void applymovement(Body tank){
         if(Gdx.input.isKeyPressed(Input.Keys.W)){
-            tank.applyForceToCenter(100,0,true);
+//            Vector2 vel = tank.getLinearVelocity();
+//
+//            tank.applyForceToCenter(1000,0,true);
         }if(Gdx.input.isKeyPressed(Input.Keys.A)){
-            tank.applyForceToCenter(-100,0,true);
+            Vector2 vel = tank.getLinearVelocity();
+            if (vel.x<=-20){
+                return;
+            }
+            tank.applyForceToCenter(-50000,0,true);
         }if(Gdx.input.isKeyPressed(Input.Keys.D)){
-            tank.applyForceToCenter(100,0,true);
+            Vector2 vel = tank.getLinearVelocity();
+            if (vel.x>=20){
+                return;
+            }
+            tank.applyForceToCenter(50000,0,true);
         }if(Gdx.input.isKeyPressed(Input.Keys.S)){
-            tank.applyForceToCenter(5,4,true);
+//            tank.applyForceToCenter(50,4,true);
         }
         if(Gdx.input.isKeyPressed(Input.Keys.NUM_1)){
             int flag=getPlayerBullet().getFire_power();
@@ -141,6 +139,8 @@ public class GameLoop {
             flag+=10;
             getPlayerBullet().setFire_power(flag);
         }
+        Vector2 vecc = tank.getLinearVelocity();
+        System.out.println(vecc.x);
     }
 
     public Bullet getPlayerBullet(){
@@ -151,6 +151,7 @@ public class GameLoop {
     }
 
     public void movement(){
+
         if(currentplayer==0){
             applymovement(tankbody1);
         }
@@ -170,9 +171,9 @@ public class GameLoop {
 
     public void render(){
         Gdx.gl.glClearColor(0,0,0,1);
-        movement();
+
 //        updateBars();
-        System.out.println("gameloop");
+//        System.out.println("gameloop");
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         spritebatch.begin();
         spritebatch.draw(img,0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());

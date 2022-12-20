@@ -109,7 +109,7 @@ public class PlayScreen extends GameScreen {
 //     int update_counter=0;
     @Override
     public void update(float delta) {
-
+        gameLoop.update();
         try {
 //            update_counter+=1;
 //            if(update_counter>100){
@@ -141,12 +141,11 @@ public class PlayScreen extends GameScreen {
     @Override
     public void draw(float delta) {
         Gdx.gl.glClearColor(0,0,0,1);
-//        updateBars();
-
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         gameLoop.render();
-
         stage.draw();
+
+
 
     }
 

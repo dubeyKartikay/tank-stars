@@ -14,7 +14,8 @@ public class Game implements Serializable {
         private int saveplace;
         private ArrayList<Game>savedgames;
         private Tank tank1,tank2;
-        private Player player1,player2;
+        private Player player1;
+    private Player player2;
         GameScreen currScreen;
         private int[] time =new int[]{0,0};
         public ArrayList<Game> getSavedgames() {
@@ -40,6 +41,8 @@ public class Game implements Serializable {
             savedgames=new ArrayList<Game>(2);
             bgMusic  = Gdx.audio.newMusic(Gdx.files.internal("Music/lofiINI.wav"));
             currScreen = new LoadingScreen(this);
+            player1 = new Player();
+            player2 = new Player();
         }
 
     public void setTime(int[] time) {
@@ -103,4 +106,20 @@ public class Game implements Serializable {
         public void destroyOverlay(){
             this.overlayScreen = null;
         }
+
+    public Player getPlayer1() {
+        return player1;
+    }
+
+    public void setPlayer1(Player player1) {
+        this.player1 = player1;
+    }
+
+    public Player getPlayer2() {
+        return player2;
+    }
+
+    public void setPlayer2(Player player2) {
+        this.player2 = player2;
+    }
 }
