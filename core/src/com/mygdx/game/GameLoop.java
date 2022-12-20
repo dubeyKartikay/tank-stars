@@ -6,6 +6,8 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -14,11 +16,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.utils.Array;
 import com.mygdx.Constants;
+
+import java.util.ArrayList;
 
 public class GameLoop  extends ApplicationAdapter implements InputProcessor  {
         Game game;
-
+        private SpriteBatch spriteBatch;
+        private Array<Body>tmpbodies=new Array<Body>();
+        private Batch batch;
+        private Sprite sprite1,sprite2;
         private int changeflag,player2fuellvl,player1fuellvl;
         final private float TIMESTEP=1/60f;
         private long[] movetime={0,0};
@@ -32,7 +40,7 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor  {
         private World world;
         private Body groundBody,tankbody1,tankbody2;
 
-        private SpriteBatch spritebatch;
+        private SpriteBatch spritebatch,tankbatch;
         private Texture groundTexture,img;
         private static GameLoop gameLoop;
         private OrthographicCamera orthographicCamera;
@@ -87,11 +95,11 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor  {
             this.game=game;
             currentplayer=0;
             spritebatch= new SpriteBatch();
+            tankbatch=new SpriteBatch();
             world= new World(new Vector2(0,-10),true);
             debugRenderer= new Box2DDebugRenderer();
             orthographicCamera=new OrthographicCamera((Gdx.graphics.getWidth()/5),Gdx.graphics.getHeight()/5);
             //BALL
-
             BodyDef tank1=new BodyDef();
             BodyDef tank2= new BodyDef();
 
@@ -101,26 +109,50 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor  {
             img=new Texture(Gdx.files.internal("playscreenbg.jpg"));
     //        bg=new Image((img));
 
-            tank1.position.set(-55,8);
-            tank2.position.set(40,9);
+            tank1.position.set(-55,20);
+            tank2.position.set(40,11);
+
+
+            FixtureDef wheel1=new FixtureDef();
+            FixtureDef wheel2=new FixtureDef();
+            FixtureDef bullet1=new FixtureDef();
+            FixtureDef tankfixture1=new FixtureDef();
 
             CircleShape circleShape= new CircleShape();
             circleShape.setRadius(2f);
             FixtureDef fixturetank1=new FixtureDef();
             FixtureDef fixturetank2=new FixtureDef();
+            PolygonShape polygonShape=new PolygonShape();
+            polygonShape.setAsBox(3,3);
             fixturetank1.density=2.5f;
-            fixturetank1.friction=.1f; //0 to 1
-            fixturetank1.restitution=0;  //bounce back after dropping to ground 0 to 1 if 1 then jumping infinte times same meter as dropped
-            fixturetank1.shape=circleShape;
-            fixturetank2.shape=circleShape;
+            fixturetank1.friction=.2f; //0 to 1
+            fixturetank1.restitution=.3f;  //bounce back after dropping to ground 0 to 1 if 1 then jumping infinte times same meter as dropped
+            fixturetank1.shape=polygonShape;
+            fixturetank2.shape=polygonShape;
             fixturetank2.restitution=0;
             fixturetank2.density=2.5f;
             fixturetank2.friction=.1f;
 
-
             tankbody1=world.createBody(tank1);
             tankbody1.createFixture(fixturetank1);
+            sprite1=new Sprite(new Texture(Gdx.files.internal("img/tanks/0.png")));
+            sprite1.setSize(14,14);
+            tankbody1.setUserData(sprite1);
+            circleShape.setRadius(2f);
+            circleShape.setPosition(new Vector2(0,5));
+            fixturetank1.shape=circleShape;
+            tankbody1.createFixture(fixturetank1);
+            circleShape.setRadius(1f);
+            circleShape.setPosition(new Vector2(3,-3));
+            fixturetank1.shape=circleShape;
+            tankbody1.createFixture(fixturetank1);
+            circleShape.setPosition(new Vector2(-3,-3));
+            fixturetank1.shape=circleShape;
+            tankbody1.createFixture(fixturetank1);
+
             tankbody2=world.createBody(tank2);
+            tankbody2.createFixture(fixturetank2);
+            fixturetank2.shape=circleShape;
             tankbody2.createFixture(fixturetank2);
             //GROUND
             tank1.type= BodyDef.BodyType.StaticBody;
@@ -223,9 +255,7 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor  {
                     player2fuellvl=100;
                 }
             }
-
         }
-
         public void render(){
             Gdx.input.setInputProcessor(this);
             Gdx.gl.glClearColor(0,0,0,1);
@@ -233,9 +263,24 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor  {
     //        updateBars();
     //        System.out.println("gameloop");
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-            spritebatch.begin();
-            spritebatch.draw(img,0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
-            spritebatch.end();
+            tankbatch.begin();
+            tankbatch.draw(img,-137,-72,Gdx.graphics.getWidth()/5,Gdx.graphics.getHeight()/5);
+            tankbatch.setProjectionMatrix(orthographicCamera.combined);
+            world.getBodies(tmpbodies);
+            for(Body body :tmpbodies){
+                if(body.getUserData()!=null && body.getUserData() instanceof Sprite){
+//                    System.out.println("llll");
+                    Sprite flagsprite=(Sprite)body.getUserData();
+//                    flagsprite.setPosition(-55,11);
+                    System.out.println(body.getPosition().x+" "+body.getPosition().y);
+                    flagsprite.setPosition(body.getPosition().x-flagsprite.getWidth()/2,body.getPosition().y-flagsprite.getHeight()/2);
+                    flagsprite.draw(tankbatch);
+                }
+            }
+            tankbatch.end();
+//            spritebatch.begin();
+//            spritebatch.draw(img,0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+//            spritebatch.end();
     //        stage.draw();
             debugRenderer.render(world,orthographicCamera.combined);
             world.step(TIMESTEP,VECLOCITYIT,POSITIONIT);
