@@ -1,29 +1,37 @@
 package com.mygdx.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.ChainShape;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.mygdx.Constants;
 
 public class GameLoop {
     Game game;
+    final private float TIMESTEP=1/60f;
+
+    final private int VECLOCITYIT=8,POSITIONIT=3;
+    private Bullet bullet_player1,bullet_player2;
+    private int currentplayer;
+    private Vector2 player1_cords,player2_cords;
+    private Stage stage;
     private OrthographicCamera camera;
     private Box2DDebugRenderer debugRenderer;
     private World world;
-    private Body groundBody;
-    private SpriteBatch batch;
-    private Texture groundTexture;
-    private static GameLoop gameLoop;
+    private Body groundBody,tankbody1,tankbody2;
 
+    private SpriteBatch spritebatch;
+    private Texture groundTexture,img;
+    private static GameLoop gameLoop;
+    private OrthographicCamera orthographicCamera;
     private Vector2 groundVertices[];
 
     public static GameLoop getInstance(Game game){
@@ -40,81 +48,138 @@ public class GameLoop {
         return gameLoop;
     }
     private GameLoop(Game game){
-        this.game = game;
-        // Set up the camera and debug renderer
-        camera = new OrthographicCamera(Gdx.graphics.getWidth()/5,Gdx.graphics.getHeight()/5);
+        this.game=game;
+        currentplayer=0;
+        spritebatch= new SpriteBatch();
+        world= new World(new Vector2(0,-10),true);
+        debugRenderer= new Box2DDebugRenderer();
+        orthographicCamera=new OrthographicCamera((Gdx.graphics.getWidth()/5),Gdx.graphics.getHeight()/5);
+        //BALL
+        BodyDef tank1=new BodyDef();
+        BodyDef tank2= new BodyDef();
 
-        debugRenderer = new Box2DDebugRenderer();
+        tank1.type= BodyDef.BodyType.DynamicBody;
+        tank2.type=BodyDef.BodyType.DynamicBody;
 
-        // Create a new Box2D world
-        world = new World(new Vector2(0, -9.81f), true);
+        img=new Texture(Gdx.files.internal("playscreenbg.jpg"));
+//        bg=new Image((img));
 
-        // Create a ground body
-        BodyDef groundBodyDef = new BodyDef();
-        groundBodyDef.position.set(0, 0);
-        groundBody = world.createBody(groundBodyDef);
+        tank1.position.set(-55,8);
+        tank2.position.set(40,9);
 
-        // Create a shape for the ground body
-        ChainShape groundShape = new ChainShape();
-        groundShape.createChain(new Vector2[] {
-                new Vector2(-10* Constants.getPPM(), 1* Constants.getPPM()),
-                new Vector2(-9* Constants.getPPM(), 2* Constants.getPPM()),
-                new Vector2(-8* Constants.getPPM(), 1* Constants.getPPM()),
-                new Vector2(-7* Constants.getPPM(), 0* Constants.getPPM()),
-                new Vector2(-6* Constants.getPPM(), 1* Constants.getPPM()),
-                new Vector2(6* Constants.getPPM(), 1* Constants.getPPM()),
-                new Vector2(7* Constants.getPPM(), 2* Constants.getPPM()),
-                new Vector2(8* Constants.getPPM(), 1* Constants.getPPM()),
-                new Vector2(9* Constants.getPPM(), 0* Constants.getPPM()),
-                new Vector2(10* Constants.getPPM(), 1* Constants.getPPM())
+        CircleShape circleShape= new CircleShape();
+        circleShape.setRadius(2f);
+        FixtureDef fixturetank1=new FixtureDef();
+        FixtureDef fixturetank2=new FixtureDef();
+        fixturetank1.density=2.5f;
+        fixturetank1.friction=.1f; //0 to 1
+        fixturetank1.restitution=0;  //bounce back after dropping to ground 0 to 1 if 1 then jumping infinte times same meter as dropped
+        fixturetank1.shape=circleShape;
+        fixturetank2.shape=circleShape;
+        fixturetank2.restitution=0;
+        fixturetank2.density=2.5f;
+        fixturetank2.friction=.1f;
+
+
+        tankbody1=world.createBody(tank1);
+        tankbody1.createFixture(fixturetank1);
+        tankbody2=world.createBody(tank2);
+        tankbody2.createFixture(fixturetank2);
+        //GROUND
+        tank1.type= BodyDef.BodyType.StaticBody;
+        tank1.position.set(0,0);
+        final Skin mySkin = new Skin(Gdx.files.internal("skins/placeholderUISkin/uiskin.json"));
+//        slot1 = new TextButton("slot1",mySkin);
+        //shape
+        ChainShape chainShape=new ChainShape();
+        chainShape.createChain(new Vector2[]{new Vector2(-134,14),
+                new Vector2(-130, 14),
+                new Vector2(-107, -12),
+                new Vector2(-79, -12),
+                new Vector2(-62, 8),
+                new Vector2(-45,8),
+                new Vector2(-30, -14),
+                new Vector2(12, -14),
+                new Vector2(32, 9),
+                new Vector2(66, 9),
+                new Vector2(80, -7),
+                new Vector2(97,-7),
+                new Vector2(112,-23),
+                new Vector2(148,-23)
         });
-        groundVertices = new Vector2[groundShape.getVertexCount()];
-        for (int i = 0; i < groundShape.getVertexCount(); i++) {
-            groundVertices[i] = new Vector2();
-            groundShape.getVertex(i,groundVertices[i]);
-        }
-        // Create a fixture for the ground body
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = groundShape;
-        groundBody.createFixture(fixtureDef);
+        fixturetank1.shape=chainShape;
+        fixturetank1.friction=.5f;
+        fixturetank1.restitution=0;
 
-        // Dispose of the shape when we're done
-        groundShape.dispose();
-
-        // Load the ground texture
-        groundTexture = new Texture("textures/ground.png");
-
-        // Create a sprite batch for rendering
-        batch = new SpriteBatch();
+        world.createBody(tank1).createFixture(fixturetank1);
+        //BOX
+        tank1.type= BodyDef.BodyType.DynamicBody;
+        tank1.position.set(2.25f,10);
+        player1_cords=tankbody1.getPosition();
+        player2_cords=tankbody2.getPosition();
     }
 
     public void update(){
-
+        System.out.println("updating");
     }
-
-    private void drawGround(){
-        Vector2[] vertices = this.groundVertices;
-        for (int i = 0; i < vertices.length - 1; i++) {
-            Vector2 v1 = vertices[i];
-            Vector2 v2 = vertices[i + 1];
-            batch.draw(groundTexture, v1.x, v1.y - 0.5f, v2.x - v1.x, v2.y);
+    public void applymovement(Body tank){
+        if(Gdx.input.isKeyPressed(Input.Keys.W)){
+            tank.applyForceToCenter(100,0,true);
+        }if(Gdx.input.isKeyPressed(Input.Keys.A)){
+            tank.applyForceToCenter(-100,0,true);
+        }if(Gdx.input.isKeyPressed(Input.Keys.D)){
+            tank.applyForceToCenter(100,0,true);
+        }if(Gdx.input.isKeyPressed(Input.Keys.S)){
+            tank.applyForceToCenter(5,4,true);
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.NUM_1)){
+            int flag=getPlayerBullet().getFire_power();
+            flag-=10;
+            getPlayerBullet().setFire_power(flag);
+        }if(Gdx.input.isKeyPressed(Input.Keys.NUM_2)){
+            int flag=getPlayerBullet().getFire_power();
+            flag+=10;
+            getPlayerBullet().setFire_power(flag);
         }
     }
+
+    public Bullet getPlayerBullet(){
+        if(currentplayer==0){
+            return bullet_player1;
+        }
+        return bullet_player2;
+    }
+
+    public void movement(){
+        if(currentplayer==0){
+            applymovement(tankbody1);
+        }
+        else{
+            applymovement(tankbody2);
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.ENTER)){
+            if(currentplayer==0){
+                currentplayer=1;
+            }
+            else{
+                currentplayer=0;
+            }
+        }
+
+    }
+
     public void render(){
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(0,0,0,1);
+        movement();
+//        updateBars();
+        System.out.println("gameloop");
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        world.step(Gdx.graphics.getDeltaTime(), 6, 2);
-        camera.position.set(groundBody.getPosition().x, groundBody.getPosition().y, 0);
-        camera.update();
-        // Draw the ground texture
-        Vector2[] vertices = this.groundVertices;
-        for (int i = 0; i < vertices.length - 1; i++) {
-            Vector2 v1 = vertices[i];
-            Vector2 v2 = vertices[i + 1];
-            batch.begin();
-            batch.draw(groundTexture,Gdx.graphics.getWidth()/2 + v1.x,Gdx.graphics.getHeight()/2 + (v1.y - 0.5f), v2.x - v1.x,Gdx.graphics.getHeight()/2 + (v1.y - 0.5f));
-            batch.end();
-        }
+        spritebatch.begin();
+        spritebatch.draw(img,0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+        spritebatch.end();
+//        stage.draw();
+        debugRenderer.render(world,orthographicCamera.combined);
+        world.step(TIMESTEP,VECLOCITYIT,POSITIONIT);
 
         // Render the Box2D debug data
 //        debugRenderer.render(world, camera.combined);
@@ -122,7 +187,7 @@ public class GameLoop {
     public void dispose () {
         // Dispose of resources when they are no longer needed
         groundTexture.dispose();
-        batch.dispose();
+        spritebatch.dispose();
         world.dispose();
         debugRenderer.dispose();
     }
