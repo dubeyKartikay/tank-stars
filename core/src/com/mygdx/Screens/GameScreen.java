@@ -8,6 +8,7 @@ import com.mygdx.game.Game;
 public abstract class GameScreen implements Screen {
     private Game game;
 
+
     protected Stage stage;
     GameScreen(Game game){
         this.game = game;

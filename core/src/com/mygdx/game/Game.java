@@ -6,70 +6,101 @@ import com.mygdx.Screens.GameScreen;
 import com.mygdx.Screens.LoadingScreen;
 import com.mygdx.Screens.MainMenu;
 
-public class  Game  {
-    private Music bgMusic;
-    GameScreen currScreen;
+import java.io.Serializable;
+import java.util.ArrayList;
+
+public class Game implements Serializable {
+        private Music bgMusic;
+        private int saveplace;
+        private ArrayList<Game>savedgames;
+        private Tank tank1,tank2;
+        private Player player1,player2;
+        GameScreen currScreen;
+        private int[] time =new int[]{0,0};
+        public ArrayList<Game> getSavedgames() {
+            return savedgames;
+        }
+
+        public void setSavedgames(ArrayList<Game> savedgames) {
+            this.savedgames = savedgames;
+        }
+
+    public void setSaveplace(int saveplace) {
+        this.saveplace = saveplace;
+    }
+
+    public int getSaveplace() {
+        return saveplace;
+    }
 
     private GameScreen overlayScreen;
-    boolean isPaused = false;
+        boolean isPaused = false;
 
+        Game(){
+            savedgames=new ArrayList<Game>(2);
+            bgMusic  = Gdx.audio.newMusic(Gdx.files.internal("Music/lofiINI.wav"));
+            currScreen = new LoadingScreen(this);
+        }
 
-    Game(){
-        bgMusic  = Gdx.audio.newMusic(Gdx.files.internal("Music/lofiINI.wav"));
-        currScreen = new LoadingScreen(this);
+    public void setTime(int[] time) {
+        this.time = time;
+    }
+
+    public int[] getTime() {
+        return time;
     }
 
     public void playMusic(){
-        if (!bgMusic.isPlaying()){
-            bgMusic.play();
+            if (!bgMusic.isPlaying()){
+                bgMusic.play();
+            }
         }
-    }
-    public void pauseMusic(){
-        if (bgMusic.isPlaying()){
-            bgMusic.pause();
+        public void pauseMusic(){
+            if (bgMusic.isPlaying()){
+                bgMusic.pause();
+            }
         }
-    }
 
-    public boolean isMusicPlaying(){
-        return bgMusic.isPlaying();
-    }
-    public void render(){
-
-        float delta  = Gdx.graphics.getDeltaTime();
-        ScreenUtils.clear(1, 0, 0, 1);
-        if (isPaused()){
-            overlayScreen.setThisAsInputStream();
-            overlayScreen.render(Gdx.graphics.getDeltaTime());
-        }else {
-            currScreen.setThisAsInputStream();
-            currScreen.render(delta);
+        public boolean isMusicPlaying(){
+            return bgMusic.isPlaying();
         }
-    }
-    public GameScreen getCurrScreen() {
-        return currScreen;
-    }
+        public void render(){
 
-    public void setPaused(boolean paused) {
-        isPaused = paused;
-    }
+            float delta  = Gdx.graphics.getDeltaTime();
+            ScreenUtils.clear(1, 0, 0, 1);
+            if (isPaused()){
+                overlayScreen.setThisAsInputStream();
+                overlayScreen.render(Gdx.graphics.getDeltaTime());
+            }else {
+                currScreen.setThisAsInputStream();
+                currScreen.render(delta);
+            }
+        }
+        public GameScreen getCurrScreen() {
+            return currScreen;
+        }
 
-    public boolean isPaused() {
-        return isPaused;
-    }
+        public void setPaused(boolean paused) {
+            isPaused = paused;
+        }
 
-    public void setCurrScreen(GameScreen currScreen) {
-        this.currScreen = currScreen;
-    }
+        public boolean isPaused() {
+            return isPaused;
+        }
 
-    public GameScreen getOverlayScreen() {
-        return overlayScreen;
-    }
+        public void setCurrScreen(GameScreen currScreen) {
+            this.currScreen = currScreen;
+        }
 
-    public void setOverlayScreen(GameScreen overlayScreen) {
-        this.overlayScreen = overlayScreen;
-    }
+        public GameScreen getOverlayScreen() {
+            return overlayScreen;
+        }
 
-    public void destroyOverlay(){
-        this.overlayScreen = null;
-    }
+        public void setOverlayScreen(GameScreen overlayScreen) {
+            this.overlayScreen = overlayScreen;
+        }
+
+        public void destroyOverlay(){
+            this.overlayScreen = null;
+        }
 }

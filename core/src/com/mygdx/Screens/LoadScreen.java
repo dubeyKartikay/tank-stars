@@ -10,8 +10,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.ObjectIntMap;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.Game;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
 
 public class LoadScreen extends GameScreen{
     SpriteBatch batch;
@@ -19,13 +26,12 @@ public class LoadScreen extends GameScreen{
     private Table table;
     TextButton slot1;
     TextButton slot2;
-    TextButton slot3;
-    TextButton slot4;
-    TextButton slot5;
     TextButton back;
+    private ArrayList<Game> toloadgames;
 
     LoadScreen(Game game) {
         super(game);
+        toloadgames=game.getSavedgames();
         stage = new Stage(new ScreenViewport());
         table = new Table();
         Gdx.input.setInputProcessor(stage);
@@ -34,9 +40,6 @@ public class LoadScreen extends GameScreen{
         final Skin mySkin = new Skin(Gdx.files.internal("skins/placeholderUISkin/uiskin.json"));
         slot1 = new TextButton("slot1",mySkin);
         slot2 = new TextButton("slot2",mySkin);
-        slot3 = new TextButton("slot3",mySkin);
-        slot4 = new TextButton("slot4",mySkin);
-        slot5 = new TextButton("slot5",mySkin);
 
         back = new TextButton("back",mySkin);
         back.setPosition(12,662);
@@ -44,7 +47,48 @@ public class LoadScreen extends GameScreen{
         back.setHeight(40);
         back.getLabel().setFontScale(1.5f);
         stage.addActor(back);
+        slot1.addListener( new ClickListener(){
+            @Override
+            public void clicked (InputEvent event, float x, float y){
+                if(toloadgames.get(0)!=null){
+                    try {
+                        deserialize(0);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
 
+                getGame().setOverlayScreen( new ConfirmationSaveScreen(getGame()) );
+            }
+        });
+        slot2.addListener( new ClickListener(){
+            @Override
+            public void clicked (InputEvent event, float x, float y){
+                if(toloadgames.get(1)!=null){
+                    try {
+                        deserialize(1);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                }
+                getGame().setOverlayScreen( new ConfirmationSaveScreen(getGame()) );
+            }
+        });
+        if(toloadgames.get(0)!=null){
+            int timearr[]=toloadgames.get(0).getTime();
+            slot1.getLabel().setText("Slot1-"+Integer.toString(timearr[0])+":"+Integer.toString(timearr[1]));
+        }
+//        else{
+//            slot1.getLabel().setText("SLOT-1");
+//        }
+        if(toloadgames.get(1)!=null){
+            int timearr[]=toloadgames.get(1).getTime();
+            slot2.getLabel().setText("Slot2-"+Integer.toString(timearr[0])+":"+Integer.toString(timearr[1]));
+        }
+//        else{
+//            slot2.getLabel().setText("SLOT-2");
+//        }
         back.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -53,9 +97,6 @@ public class LoadScreen extends GameScreen{
         });
         slot1.getLabel().setFontScale(3);
         slot2.getLabel().setFontScale(3);
-        slot3.getLabel().setFontScale(3);
-        slot4.getLabel().setFontScale(3);
-        slot5.getLabel().setFontScale(3);
 
         table.setFillParent(true);
         table.setZIndex(0);
@@ -64,19 +105,35 @@ public class LoadScreen extends GameScreen{
         table.add(slot1).right().padRight(10).width(300).height(100);
         table.row().pad(10);
         table.add(slot2).right().padRight(10).width(300).height(100);
-        table.row().pad(10);
-        table.add(slot3).right().padRight(10).width(300).height(100);
-        table.row().pad(10);
-        table.add(slot4).right().padRight(10).width(300).height(100);
-        table.row().pad(10);
-        table.add(slot5).right().padRight(10).width(300).height(100);
+
     }
 
     @Override
     public void update(float delta) {
 
     }
+    public void deserialize(int idx) throws IOException {
+        ObjectInputStream ois=null;
+        ArrayList<Game>gamedes=new ArrayList<Game>(2);
+//        Game returngame;
+        try{
+            ois=new ObjectInputStream(new FileInputStream("serializefile.txt"));
+//            if(toloadgames.get(idx)!=null){
+                Game game1=(Game) ois.readObject();
+                if(game1.getSaveplace()!=idx){
+                    game1=(Game)ois.readObject();
+                }
+                getGame().setCurrScreen(new PlayScreen(game1));
+//            }
 
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if(ois!=null){
+                ois.close();
+            }
+        }
+    }
     @Override
     public void draw(float delta) {
         float delta2 = Gdx.graphics.getDeltaTime();

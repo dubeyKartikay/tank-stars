@@ -2,10 +2,12 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
-public class Tank {
+import java.io.Serializable;
+
+public class Tank implements Serializable {
     private int fuel,health;
     PowerUps powerups;
-    Tank(){
+    public Tank(){
         this.health=100;
         powerups=new PowerUps();
     }
