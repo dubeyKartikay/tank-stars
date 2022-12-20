@@ -90,7 +90,6 @@ public class PlayScreen extends GameScreen {
             getGame().setPaused(true);
             getGame().setOverlayScreen(new PauseMenu(getGame()));
         }});
-
         table.add(player1Health).width(500);
         table.add(pauseButton).padLeft(50).padRight(50);
         table.add(player2Health).width(500);

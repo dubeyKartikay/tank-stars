@@ -110,50 +110,42 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor  {
     //        bg=new Image((img));
 
             tank1.position.set(-55,20);
-            tank2.position.set(40,11);
-
+            tank2.position.set(40,14);
 
             FixtureDef wheel1=new FixtureDef();
             FixtureDef wheel2=new FixtureDef();
             FixtureDef bullet1=new FixtureDef();
             FixtureDef tankfixture1=new FixtureDef();
 
+
             CircleShape circleShape= new CircleShape();
-            circleShape.setRadius(2f);
-            FixtureDef fixturetank1=new FixtureDef();
-            FixtureDef fixturetank2=new FixtureDef();
             PolygonShape polygonShape=new PolygonShape();
             polygonShape.setAsBox(3,3);
-            fixturetank1.density=2.5f;
-            fixturetank1.friction=.2f; //0 to 1
-            fixturetank1.restitution=.3f;  //bounce back after dropping to ground 0 to 1 if 1 then jumping infinte times same meter as dropped
-            fixturetank1.shape=polygonShape;
-            fixturetank2.shape=polygonShape;
-            fixturetank2.restitution=0;
-            fixturetank2.density=2.5f;
-            fixturetank2.friction=.1f;
-
+            tankfixture1.shape=polygonShape;
             tankbody1=world.createBody(tank1);
-            tankbody1.createFixture(fixturetank1);
+            tankbody2=world.createBody(tank2);
+            tankbody1.createFixture(tankfixture1);
+            tankbody2.createFixture(tankfixture1);
+            circleShape.setRadius(2f);
+            circleShape.setPosition(new Vector2(0,5));
+            tankfixture1.shape=circleShape;
+            tankbody1.createFixture(tankfixture1);
+            tankbody2.createFixture(tankfixture1);
+            circleShape.setRadius(1.5f);
+            circleShape.setPosition(new Vector2(3,-3));
+            tankfixture1.shape=circleShape;
+            tankbody1.createFixture(tankfixture1);
+            tankbody2.createFixture(tankfixture1);
+            circleShape.setPosition(new Vector2(-3,-3));
+            tankfixture1.shape=circleShape;
+            tankbody1.createFixture(tankfixture1);
+            tankbody2.createFixture(tankfixture1);
+
             sprite1=new Sprite(new Texture(Gdx.files.internal("img/tanks/0.png")));
             sprite1.setSize(14,14);
             tankbody1.setUserData(sprite1);
-            circleShape.setRadius(2f);
-            circleShape.setPosition(new Vector2(0,5));
-            fixturetank1.shape=circleShape;
-            tankbody1.createFixture(fixturetank1);
-            circleShape.setRadius(1f);
-            circleShape.setPosition(new Vector2(3,-3));
-            fixturetank1.shape=circleShape;
-            tankbody1.createFixture(fixturetank1);
-            circleShape.setPosition(new Vector2(-3,-3));
-            fixturetank1.shape=circleShape;
-            tankbody1.createFixture(fixturetank1);
 
-            tankbody2=world.createBody(tank2);
-            tankbody2.createFixture(fixturetank2);
-            fixturetank2.shape=circleShape;
-            tankbody2.createFixture(fixturetank2);
+
             //GROUND
             tank1.type= BodyDef.BodyType.StaticBody;
             tank1.position.set(0,0);
@@ -176,12 +168,12 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor  {
                     new Vector2(112,-23),
                     new Vector2(148,-23)
             });
-            fixturetank1.shape=chainShape;
-            fixturetank1.friction=.5f;
-            fixturetank1.restitution=0;
+            tankfixture1.shape=chainShape;
+            tankfixture1.friction=.5f;
+            tankfixture1.restitution=0;
 
             groundBody=world.createBody(tank1);
-            groundBody.createFixture(fixturetank1);
+            groundBody.createFixture(tankfixture1);
             //BOX
             tank1.type= BodyDef.BodyType.DynamicBody;
             tank1.position.set(2.25f,10);
