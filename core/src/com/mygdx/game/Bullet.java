@@ -3,14 +3,12 @@ package com.mygdx.game;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-
-import java.nio.BufferOverflowException;
 
 public class Bullet {
     private static Texture texture;
-    private int damage,speed,angle,fire_power,x,y;
+    private int damage = 10,speed,angle,fire_power,x,y;
 
+    private Tank tank;
     private boolean collidable = false;
     public boolean isCollidable(){
         return  collidable;
@@ -65,21 +63,25 @@ public class Bullet {
         return y;
     }
 
+    private World world;
     public void setY(int y) {
         this.y = y;
     }
-    Bullet(World world, int x, int y){
+    Bullet(World world, int x, int y,Tank tank){
         BodyDef bodyDef = new BodyDef();
         bodyDef.position.set(x,y);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
+        this.setWorld(world);
         body = world.createBody(bodyDef);
         CircleShape circleShape= new CircleShape();
         circleShape.setRadius(2f);
         circleShape.setPosition(new Vector2(0,5));
         FixtureDef fixtureDef =  new FixtureDef();
         fixtureDef.shape =circleShape;
+        fixtureDef.density=1;
         body.createFixture(fixtureDef);
         body.setUserData(this);
+        setTank(tank);
     }
 //    public Bullet(int damage, int speed, int angle, int fire_power, int x, int y) {
 //        this.damage = damage;
@@ -103,5 +105,25 @@ public class Bullet {
 
     public void setBody(Body body) {
         this.body = body;
+    }
+
+    public Tank getTank() {
+        return tank;
+    }
+
+    public void setTank(Tank tank) {
+        this.tank = tank;
+    }
+
+    public World getWorld() {
+        return world;
+    }
+
+    public void setWorld(World world) {
+        this.world = world;
+    }
+
+    public void clear(){
+        this.world.destroyBody(this.getBody());
     }
 }

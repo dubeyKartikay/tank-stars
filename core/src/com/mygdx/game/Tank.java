@@ -25,6 +25,9 @@ public class Tank implements Serializable {
     private Bullet bullet;
     private Vector2 position=new Vector2();
 
+    public void applyDamage(int damage){
+        this.health-=damage;
+    }
     private PrismaticJoint bulletJoint;
     public Tank(World world,int variety,int x,int y){
         this.world = world;
@@ -38,13 +41,14 @@ public class Tank implements Serializable {
         tank1.type= BodyDef.BodyType.DynamicBody;
 
         tank1.position.set(x,y);
-        bullet = new Bullet(world,x,y);
+        bullet = new Bullet(world,x,y,this);
 
         FixtureDef tankfixture1=new FixtureDef();
         CircleShape circleShape= new CircleShape();
         PolygonShape polygonShape=new PolygonShape();
         polygonShape.setAsBox(3,3);
         tankfixture1.shape=polygonShape;
+        tankfixture1.density=100;
         tankBody=world.createBody(tank1);
         tankBody.createFixture(tankfixture1);
         circleShape.setRadius(1.5f);
@@ -56,10 +60,10 @@ public class Tank implements Serializable {
         tankBody.createFixture(tankfixture1);
         getTankBody().createFixture(tankfixture1);
         sprite=getSprite(0,"L");
-
+        tankBody.setUserData(this);
         PrismaticJointDef defJoint = new PrismaticJointDef ();
         defJoint.initialize(tankBody, bullet.getBody(),new Vector2(0,0),new Vector2(0f, 1));
-
+        tankBody.setFixedRotation(true);
         bulletJoint = (PrismaticJoint) world.createJoint(defJoint);
         bulletJoint.setLimits(0,0);
         bulletJoint.enableLimit(true);
@@ -141,9 +145,10 @@ public class Tank implements Serializable {
 
     public void fire(){
         world.destroyJoint(bulletJoint);
+//        bullet.getBody().setTransform(2,2,bullet.getBody().getAngle());
         bullet.getBody().setLinearVelocity((float) (getFirepower()*Math.cos(getAngle())),(float) (getFirepower()*Math.sin(getAngle())));
         bullet.setCollidable(true);
-        bullet = new Bullet(world, (int) getPosition().x, (int) getPosition().y);
+        bullet = new Bullet(world, (int) getPosition().x, (int) getPosition().y,this);
         PrismaticJointDef defJoint = new PrismaticJointDef ();
         defJoint.initialize(tankBody, bullet.getBody(),new Vector2(0,0),new Vector2(0f, 1));
 

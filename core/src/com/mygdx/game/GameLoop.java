@@ -12,16 +12,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Array;
-import com.mygdx.Constants;
 import com.mygdx.Screens.PauseMenu;
-import com.mygdx.Screens.PlayScreen;
-
-import java.util.ArrayList;
 
 public class GameLoop  extends ApplicationAdapter implements InputProcessor  {
         Game game;
@@ -29,6 +22,8 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor  {
         private Array<Body>tmpbodies=new Array<Body>();
         private Batch batch;
         private Sprite sprite1,sprite2;
+
+        private Array<Bullet> bulletDeletionList = new Array<>();
         private int changeflag,player2fuellvl,player1fuellvl;
         final private float TIMESTEP=1/60f;
         private long[] movetime={0,0};
@@ -98,8 +93,8 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor  {
             currentplayer=0;
             spritebatch= new SpriteBatch();
             tankbatch=new SpriteBatch();
-            world= new World(new Vector2(0,-10),true);
-            world.setContactListener(new CollisionHandler());
+            world= new World(new Vector2(0,-50),true);
+            world.setContactListener(new CollisionHandler(bulletDeletionList));
             game.getPlayer1().initTank(world,-55,20);
             game.getPlayer2().initTank(world,40,14);
             debugRenderer= new Box2DDebugRenderer();
@@ -183,6 +178,7 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor  {
 
             groundBody=world.createBody(tank1);
             groundBody.createFixture(tankfixture1);
+            groundBody.setUserData(new Ground());
             //BOX
             tank1.type= BodyDef.BodyType.DynamicBody;
             tank1.position.set(2.25f,10);
@@ -215,15 +211,23 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor  {
             }
             if(Gdx.input.isKeyPressed(Input.Keys.A)){
                 if(currentplayer ==0 && player1fuellvl>=0){
-                    tank.applyForceToCenter(-100,0,true);
+                    if(tank.getLinearVelocity().x > -20) {
+                        tank.setLinearVelocity((float) (tank.getLinearVelocity().x - 1), (float) (tank.getLinearVelocity().y));
+                    }
                 } if(currentplayer ==1 && player2fuellvl>=0){
-                    tank.applyForceToCenter(-100,0,true);
+                    if(tank.getLinearVelocity().x > -20) {
+                        tank.setLinearVelocity((float) (tank.getLinearVelocity().x - 1), (float) (tank.getLinearVelocity().y));
+                    }
                 }
             }if(Gdx.input.isKeyPressed(Input.Keys.D)){
                 if(currentplayer ==0 && player1fuellvl>=0){
-                    tank.applyForceToCenter(100,0,true);
+                    if(tank.getLinearVelocity().x < 20) {
+                        tank.setLinearVelocity((float) (tank.getLinearVelocity().x + 1), (float) (tank.getLinearVelocity().y));
+                    }
                 } if(currentplayer ==1 && player2fuellvl>=0){
-                    tank.applyForceToCenter(100,0,true);
+                    if(tank.getLinearVelocity().x < 20) {
+                        tank.setLinearVelocity((float) (tank.getLinearVelocity().x + 1), (float) (tank.getLinearVelocity().y));
+                    }
                 }
             }
             if(Gdx.input.isKeyPressed(Input.Keys.W)){
@@ -235,18 +239,18 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor  {
                 }
             }if(Gdx.input.isKeyPressed(Input.Keys.NUM_2)){
                 if(currentplayer==0){
-                    game.getPlayer1().getTank().setFirepower(game.getPlayer1().getTank().getAngle()+1);
+                    game.getPlayer1().getTank().setFirepower(game.getPlayer1().getTank().getFirepower()+1);
                 }
                 else{
-                    game.getPlayer2().getTank().setFirepower(game.getPlayer2().getTank().getAngle()+1);
+                    game.getPlayer2().getTank().setFirepower(game.getPlayer2().getTank().getFirepower()+1);
                 }
             }
             if(Gdx.input.isKeyPressed(Input.Keys.NUM_1)){
                 if(currentplayer==0){
-                    game.getPlayer1().getTank().setFirepower(game.getPlayer1().getTank().getAngle()-1);
+                    game.getPlayer1().getTank().setFirepower(game.getPlayer1().getTank().getFirepower()-1);
                 }
                 else{
-                    game.getPlayer2().getTank().setFirepower(game.getPlayer2().getTank().getAngle()-1);
+                    game.getPlayer2().getTank().setFirepower(game.getPlayer2().getTank().getFirepower()-1);
                 }
             }
             if (Gdx.input.isKeyJustPressed(Input.Keys.F)){
@@ -317,7 +321,13 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor  {
 //            System.out.println("angle 1 : "+game.getPlayer1().getTank().getAngle());
             debugRenderer.render(world,orthographicCamera.combined);
             world.step(TIMESTEP,VECLOCITYIT,POSITIONIT);
-
+            if (bulletDeletionList.size > 0){
+                for (Bullet b :
+                        bulletDeletionList) {
+                    b.clear();
+                }
+                bulletDeletionList.clear();
+            }
             // Render the Box2D debug data
     //        debugRenderer.render(world, camera.combined);
         }
