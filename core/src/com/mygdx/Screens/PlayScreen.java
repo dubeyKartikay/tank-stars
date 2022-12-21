@@ -90,7 +90,6 @@ public class PlayScreen extends GameScreen {
             getGame().setPaused(true);
             getGame().setOverlayScreen(new PauseMenu(getGame()));
         }});
-
         table.add(player1Health).width(500);
         table.add(pauseButton).padLeft(50).padRight(50);
         table.add(player2Health).width(500);
@@ -98,7 +97,7 @@ public class PlayScreen extends GameScreen {
         spritebatch=new SpriteBatch();
         player1fuel = new ProgressBar(0,100,1,false,healthBarSkin);
         player2fuel= new ProgressBar(0,100,1,false,healthBarSkin);
-        player1fuel.setValue(50);
+        player1fuel.setValue(100);
         player2fuel.setValue(100);
         player1fuel.setPosition(20,30);
         stage.addActor(player1fuel);
@@ -109,7 +108,7 @@ public class PlayScreen extends GameScreen {
 //     int update_counter=0;
     @Override
     public void update(float delta) {
-        gameLoop.update();
+
         try {
 //            update_counter+=1;
 //            if(update_counter>100){
@@ -124,28 +123,28 @@ public class PlayScreen extends GameScreen {
             System.out.println(e);
         }
     }
-//    public void updateBars(){
-//        Vector2 player1current,player2current;
-//        player1current=tankbody1.getPosition();
-//        player2current=tankbody2.getPosition();
-//        System.out.println("curr1-"+player1current+"cord-"+player1_cords);
-//        float diff1x=Math.abs((player1_cords.x)-(player1current.x));
-//        float diff2x=Math.abs(player2_cords.x-player2current.x);
-//        System.out.println(diff1x +" : "+diff2x);
-//        player1fuel.setValue(player1fuel.getValue()-(diff1x));
-//        player2fuel.setValue(player2fuel.getValue()-(diff2x));
-////        player1fuel.setValue(player1fuel.getValue()-20);
-//        player1_cords=tankbody1.getPosition();
-//        player2_cords=tankbody2.getPosition();
-//    }
+    public void updateBars(){
+        if(gameLoop.getChangeflag()==1){
+            gameLoop.setChangeflag(0);
+            if(gameLoop.getCurrentplayer()==0){
+                player1fuel.setValue(gameLoop.getPlayer1fuellvl());
+
+            }
+            else{
+                player2fuel.setValue(gameLoop.getPlayer2fuellvl());
+            }
+        }
+
+    }
     @Override
     public void draw(float delta) {
         Gdx.gl.glClearColor(0,0,0,1);
+        updateBars();
+
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         gameLoop.render();
+
         stage.draw();
-
-
 
     }
 
