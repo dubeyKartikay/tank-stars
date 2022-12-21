@@ -115,7 +115,9 @@ public class TankSelect extends GameScreen{
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
                         getGame().getPlayer1().setTankIndex(currPlayer1TankInd);
+                        getGame().getPlayer1().setSide("L");
                         getGame().getPlayer2().setTankIndex(currPlayer2TankInd);
+                        getGame().getPlayer2().setSide("R");
                         getGame().setCurrScreen(new PlayScreen(getGame()));
                     }
                 }

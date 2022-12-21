@@ -29,9 +29,9 @@ public class LoadingScreen extends GameScreen{
     @Override
 
     public void update(float delta) {
-    if(Gdx.input.justTouched()){
-        getGame().setCurrScreen(new PlayScreen(getGame()));
-    }
+        if(Gdx.input.justTouched()){
+            getGame().setCurrScreen(new TankSelect(getGame()));
+        }
     }
 
     @Override

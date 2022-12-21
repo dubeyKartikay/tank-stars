@@ -22,6 +22,7 @@ public class Tank implements Serializable {
     private Body tankBody;
 
     private World world;
+    private Texture texture;
     private Bullet bullet;
     private Vector2 position=new Vector2();
 
@@ -29,7 +30,7 @@ public class Tank implements Serializable {
         this.health-=damage;
     }
     private PrismaticJoint bulletJoint;
-    public Tank(World world,int variety,int x,int y){
+    public Tank(World world,int variety,String side,int x,int y){
         this.world = world;
         angle=10;
         firepower=50;
@@ -59,14 +60,19 @@ public class Tank implements Serializable {
         tankfixture1.shape=circleShape;
         tankBody.createFixture(tankfixture1);
         getTankBody().createFixture(tankfixture1);
-        sprite=getSprite(0,"L");
+//        sprite=getSprite(0,"L");
         tankBody.setUserData(this);
+        texture=makeTexture(variety,side);
         PrismaticJointDef defJoint = new PrismaticJointDef ();
         defJoint.initialize(tankBody, bullet.getBody(),new Vector2(0,0),new Vector2(0f, 1));
         tankBody.setFixedRotation(true);
         bulletJoint = (PrismaticJoint) world.createJoint(defJoint);
         bulletJoint.setLimits(0,0);
         bulletJoint.enableLimit(true);
+    }
+
+    public Texture getTexture() {
+        return texture;
     }
 
     public double getAngle() {
@@ -85,7 +91,7 @@ public class Tank implements Serializable {
         this.firepower = firepower;
     }
 
-    public Sprite getSprite(int variety, String side){
+    public Texture makeTexture(int variety, String side){
         String path="img/tanks/";
         if(Objects.equals(side, "L")){
             if(variety==0){
@@ -108,13 +114,13 @@ public class Tank implements Serializable {
             }
         }
         path+=".png";
-        Sprite ret= new Sprite(new Texture(Gdx.files.internal(path)));
+        Texture ret=(new Texture(Gdx.files.internal(path)));
         return ret;
     }
     public void setHealth(int health) {
         this.health = health;
     }
-
+//    get
     public int getHealth() {
         return health;
     }

@@ -50,9 +50,9 @@ public class PlayScreen extends GameScreen {
     private Button pauseButton;
     private GameLoop gameLoop;
     Texture img2;
-
+    private ProgressBar powerbar;
+    private Label anglelabel,currentplayerlable;
     PlayScreen(final Game game) {
-
         super(game);
         gameLoop =GameLoop.getInstance(game);
 //        gameLoop = GameLoop.getInstance(game);
@@ -63,9 +63,27 @@ public class PlayScreen extends GameScreen {
         img2=new Texture(Gdx.files.internal("playscreenbg.jpg"));
         Skin healthBarSkin = new Skin(Gdx.files.internal("skins/gdx-skins/comic/skin/comic-ui.json"));
         Skin pauseButtonSkin = new Skin(Gdx.files.internal("skins/gdx-skins/arcade/skin/arcade-ui.json"));
+        Skin angleskin=new Skin(Gdx.files.internal("skins/gdx-skins/metal/skin/metal-ui.json"));
+
+        anglelabel= new Label(Double.toString(game.getPlayer1().getTank().getAngle()),angleskin);
+        anglelabel.setPosition(620,90);
+        anglelabel.setSize(40,40);
+        anglelabel.setFontScale(3);
+        stage.addActor(anglelabel);
+
+        currentplayerlable= new Label("PLAYER 1 CHANCE",angleskin);
+        currentplayerlable.setPosition(400,550);
+        currentplayerlable.setSize(300,50);
+        currentplayerlable.setFontScale(5);
+        stage.addActor(currentplayerlable);
 
         player1Health = new ProgressBar(0,100,1,false,healthBarSkin);
         player2Health = new ProgressBar(0,100,1,false,healthBarSkin);
+        powerbar= new ProgressBar(0,100,1,false,healthBarSkin);
+        powerbar.setValue((float) game.getPlayer1().getTank().getFirepower());
+        powerbar.setWidth(270);
+        powerbar.setPosition(525,30);
+        stage.addActor(powerbar);
         player1Health.setValue(40);
         player1Health.setColor(Color.GREEN);
         pauseButton = new Button(pauseButtonSkin,"red");
@@ -84,12 +102,12 @@ public class PlayScreen extends GameScreen {
             }
         });
         pauseButton.addListener(new ClickListener(){
-        @Override
-        public void clicked(InputEvent event, float x, float y) {
-            System.out.println("PASIrdf");
-            getGame().setPaused(true);
-            getGame().setOverlayScreen(new PauseMenu(getGame()));
-        }});
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("PASIrdf");
+                getGame().setPaused(true);
+                getGame().setOverlayScreen(new PauseMenu(getGame()));
+            }});
         table.add(player1Health).width(500);
         table.add(pauseButton).padLeft(50).padRight(50);
         table.add(player2Health).width(500);
@@ -105,7 +123,7 @@ public class PlayScreen extends GameScreen {
         stage.addActor(player2fuel);
 
     }
-//     int update_counter=0;
+    //     int update_counter=0;
     @Override
     public void update(float delta) {
 
@@ -124,14 +142,26 @@ public class PlayScreen extends GameScreen {
         }
     }
     public void updateBars(){
+        if(gameLoop.getCurrentplayer()==0){
+            powerbar.setValue((float) getGame().getPlayer1().getTank().getFirepower());
+            anglelabel.setText((int)getGame().getPlayer1().getTank().getAngle()+" degree");
+        }
+        else{
+            powerbar.setValue((float) getGame().getPlayer2().getTank().getFirepower());
+//            double
+            anglelabel.setText(((int)getGame().getPlayer2().getTank().getAngle())+" degree");
+        }
         if(gameLoop.getChangeflag()==1){
             gameLoop.setChangeflag(0);
             if(gameLoop.getCurrentplayer()==0){
+                currentplayerlable.setText("PLAYER 1 CHANCE");
                 player1fuel.setValue(gameLoop.getPlayer1fuellvl());
-
+//                powerbar.setValue(getGame().getPlayer1().getTank().get)
             }
             else{
+                currentplayerlable.setText("PLAYER 2 CHANCE");
                 player2fuel.setValue(gameLoop.getPlayer2fuellvl());
+
             }
         }
 
