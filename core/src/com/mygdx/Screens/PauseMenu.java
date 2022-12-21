@@ -42,7 +42,6 @@ public class PauseMenu extends GameScreen{
         else{
             musicStatus[0] ="OFF";
         }
-
         resumeButton = new TextButton("Resume",mySkin);
         resumeButton.addListener( new ClickListener(){
             @Override

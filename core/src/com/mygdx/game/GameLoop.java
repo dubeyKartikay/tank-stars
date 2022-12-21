@@ -22,11 +22,12 @@ import com.mygdx.Constants;
 import com.mygdx.Screens.MainMenu;
 import com.mygdx.Screens.PauseMenu;
 import com.mygdx.Screens.PlayScreen;
+import com.mygdx.Screens.WinScreen;
 
 import java.util.ArrayList;
 
 public class GameLoop  extends ApplicationAdapter implements InputProcessor{
-    Game game;
+    private Game game;
     private SpriteBatch spriteBatch;
     private Texture texture1,texture2;
     private Array<Body>tmpbodies=new Array<Body>();
@@ -72,12 +73,12 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor{
         return player2fuellvl;
     }
 
-    public static GameLoop getInstance(Game game){
-        if (gameLoop == null){
-            gameLoop = new GameLoop(game);
-        }
-        return gameLoop;
-    }
+//    public static GameLoop getInstance(Game game){
+//        if (gameLoop == null){
+//            gameLoop = new GameLoop(game);
+//        }
+//        return gameLoop;
+//    }
 
     public int getCurrentplayer() {
         return currentplayer;
@@ -91,13 +92,13 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor{
         this.changeflag = changeflag;
     }
 
-    public static GameLoop getInstance(){
-        if (gameLoop == null){
-            return null;
-        }
-        return gameLoop;
-    }
-    private GameLoop(Game game){
+//    public static GameLoop getInstance(){
+//        if (gameLoop == null){
+//            return null;
+//        }
+//        return gameLoop;
+//    }
+    public GameLoop(Game game){
         player1fuellvl=100;
         player2fuellvl=100;
         changeflag=0;
@@ -169,11 +170,11 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor{
     public void update(){
         if (game.getPlayer1().getTank().getHealth() <=0){
             System.out.println("Player 1 loses");
-            game.setCurrScreen(new MainMenu(game));
+            game.setCurrScreen(new WinScreen(game,1));
         }
         if (game.getPlayer2().getTank().getHealth() <=0){
             System.out.println("Player 2 loses");
-            game.setCurrScreen(new MainMenu(game));
+            game.setCurrScreen(new WinScreen(game,2));
         }
     }
     public void applymovement(Body tank){

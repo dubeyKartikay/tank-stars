@@ -43,7 +43,9 @@ public class Game implements Serializable {
         player1 = new Player();
         player2 = new Player();
     }
+    public void refreshgame(){
 
+    }
     public void setTime(int[] time) {
         this.time = time;
     }

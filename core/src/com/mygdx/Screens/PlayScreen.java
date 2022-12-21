@@ -54,8 +54,8 @@ public class PlayScreen extends GameScreen {
     private Label anglelabel,currentplayerlable;
     PlayScreen(final Game game) {
         super(game);
-        gameLoop =GameLoop.getInstance(game);
-//        gameLoop = GameLoop.getInstance(game);
+//        gameLoop =GameLoop.getInstance(game);
+        gameLoop = new GameLoop(game);
         stage = new Stage();
         table = new Table();
         table.setFillParent(true);
