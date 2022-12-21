@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -35,6 +36,8 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor{
     final private float TIMESTEP=1/60f;
     private long[] movetime={0,0};
     final private int VECLOCITYIT=8,POSITIONIT=3;
+    private ArrayList<Float> Tx;
+    private ArrayList<Float> Ty;
     private Bullet bullet_player1,bullet_player2;
     private int currentplayer;
     private Vector2 player1_cords,player2_cords;
@@ -49,6 +52,8 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor{
     private static GameLoop gameLoop;
     private OrthographicCamera orthographicCamera;
     private Vector2 groundVertices[];
+
+    private Texture trajpic;
 
     public void setPlayer1fuellvl(int player1fuellvl) {
         this.player1fuellvl = player1fuellvl;
@@ -110,6 +115,7 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor{
         debugRenderer= new Box2DDebugRenderer();
         orthographicCamera=new OrthographicCamera((Gdx.graphics.getWidth()/5),Gdx.graphics.getHeight()/5);
         //BALL
+        trajpic = new Texture(Gdx.files.internal("img/trajpoint.png"));
         tankbody1=game.getPlayer1().getTank().getTankBody();
         tankbody2=game.getPlayer2().getTank().getTankBody();
 
@@ -160,24 +166,31 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor{
         System.out.println("updating");
     }
     public void applymovement(Body tank){
+//        if(currentplayer==0){
+//            System.out.println(game.getPlayer1().getTank().getAngle());
+//        }
+//        else{
+//            System.out.println(game.getPlayer2().getTank().getAngle());
+//        }
         if(Gdx.input.isKeyPressed(Input.Keys.W)){
             // System.out.println("W is pressed");
             if(currentplayer==0){
-                game.getPlayer1().getTank().setAngle(game.getPlayer1().getTank().getAngle()+0.1);
+                game.getPlayer1().getTank().setAngle(game.getPlayer1().getTank().getAngle()+1);
             }
             else{
-                game.getPlayer2().getTank().setAngle(game.getPlayer2().getTank().getAngle()+0.1);
+                game.getPlayer2().getTank().setAngle(game.getPlayer2().getTank().getAngle()+1);
             }
 
         }if(Gdx.input.isKeyPressed(Input.Keys.S)){
             if(currentplayer==0){
-                game.getPlayer1().getTank().setAngle(game.getPlayer1().getTank().getAngle()-0.1);
+                game.getPlayer1().getTank().setAngle(game.getPlayer1().getTank().getAngle()-1);
             }
             else{
-                game.getPlayer2().getTank().setAngle(game.getPlayer2().getTank().getAngle()-0.1);
+                game.getPlayer2().getTank().setAngle(game.getPlayer2().getTank().getAngle()-1);
             }
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.A)){
+        if(Gdx.input.isKeyPressed(Input.Keys.A) && ((Tank)tank.getUserData()).isTouchingGround()){
+
             if(currentplayer ==0 && player1fuellvl>=0){
                 if(tank.getLinearVelocity().x > -20) {
                     tank.setLinearVelocity((float) (tank.getLinearVelocity().x - 1), (float) (tank.getLinearVelocity().y));
@@ -187,7 +200,7 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor{
                     tank.setLinearVelocity((float) (tank.getLinearVelocity().x - 1), (float) (tank.getLinearVelocity().y));
                 }
             }
-        }if(Gdx.input.isKeyPressed(Input.Keys.D)){
+        }if(Gdx.input.isKeyPressed(Input.Keys.D) && ((Tank)tank.getUserData()).isTouchingGround()){
             if(currentplayer ==0 && player1fuellvl>=0){
                 if(tank.getLinearVelocity().x < 20) {
                     tank.setLinearVelocity((float) (tank.getLinearVelocity().x + 1), (float) (tank.getLinearVelocity().y));
@@ -198,14 +211,7 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor{
                 }
             }
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.W)){
-            if(currentplayer==0){
-                game.getPlayer1().getTank().setAngle(game.getPlayer1().getTank().getAngle()+0.1);
-            }
-            else{
-                game.getPlayer2().getTank().setAngle(game.getPlayer2().getTank().getAngle()+0.1);
-            }
-        }if(Gdx.input.isKeyPressed(Input.Keys.NUM_2)){
+        if(Gdx.input.isKeyPressed(Input.Keys.NUM_2)){
             if(currentplayer==0){
                 game.getPlayer1().getTank().setFirepower(game.getPlayer1().getTank().getFirepower()+1);
             }
@@ -268,6 +274,31 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor{
             }
         }
     }
+    public void rendertraj(){
+        float myangle,vel,gravity=10f ,xcoord,ycoord,finalvx,finalvy,timejump=0.005f;
+        if(currentplayer==0){
+            myangle= (float) game.getPlayer1().getTank().getAngle();
+            vel = (float) game.getPlayer1().getTank().getFirepower();
+            xcoord = game.getPlayer1().getTank().getTankBody().getPosition().x;
+            ycoord = game.getPlayer1().getTank().getTankBody().getPosition().y;
+        }
+        else{
+            myangle= (float) game.getPlayer2().getTank().getAngle();
+            vel = (float) game.getPlayer2().getTank().getFirepower();
+            xcoord = game.getPlayer2().getTank().getTankBody().getPosition().x;
+            ycoord = game.getPlayer2().getTank().getTankBody().getPosition().y;
+        }
+        finalvy = vel * MathUtils.sinDeg(myangle);
+        finalvx = vel * MathUtils.cosDeg(myangle);
+        float totalTime = 1; // the projectile will travel for 5 seconds
+        for (float t = 0; t <0.3; t += 0.005f) {
+            xcoord+=finalvx*0.005f;
+            ycoord+=finalvy*0.005f;
+            Tx.add(xcoord);
+            Ty.add(ycoord);
+            finalvy-=gravity*0.005f;
+        }
+    }
     public void render(){
         Gdx.input.setInputProcessor(this);
         Gdx.gl.glClearColor(0,0,0,1);
@@ -277,6 +308,13 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor{
         tankbatch.draw(img,-137,-72,Gdx.graphics.getWidth()/5,Gdx.graphics.getHeight()/5);
         tankbatch.setProjectionMatrix(orthographicCamera.combined);
 //        Sprite flagsprite1=game.getPlayer1().getTank().getSprite();
+
+        Tx=new ArrayList<Float>();
+        Ty=new ArrayList<Float>();
+        rendertraj();
+        for(int i=0;i<Tx.size();i++){
+            tankbatch.draw(trajpic, Tx.get(i), Ty.get(i),1,2);
+        }
         tankbatch.draw(texture1,tankbody1.getPosition().x-7,tankbody1.getPosition().y-8,17,17);
         tankbatch.draw(texture2,tankbody2.getPosition().x-9,tankbody2.getPosition().y-8,17,17);
         tankbatch.end();

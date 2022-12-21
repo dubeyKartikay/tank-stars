@@ -5,8 +5,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.physics.box2d.joints.DistanceJoint;
-import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
 import com.badlogic.gdx.physics.box2d.joints.PrismaticJoint;
 import com.badlogic.gdx.physics.box2d.joints.PrismaticJointDef;
 
@@ -148,11 +146,18 @@ public class Tank implements Serializable {
         this.tankBody = tankBody;
     }
 
+    private boolean TouchingGround = false;
+    public boolean isTouchingGround(){
+        return TouchingGround;
+    }
 
+    public void setTouchingGround(boolean touchingGround){
+        TouchingGround = touchingGround;
+    }
     public void fire(){
         world.destroyJoint(bulletJoint);
 //        bullet.getBody().setTransform(2,2,bullet.getBody().getAngle());
-        bullet.getBody().setLinearVelocity((float) (getFirepower()*Math.cos(getAngle())),(float) (getFirepower()*Math.sin(getAngle())));
+        bullet.getBody().setLinearVelocity((float) (getFirepower()*Math.cos(getAngle()*Math.PI/180)),(float) (getFirepower()*Math.sin(getAngle()*Math.PI/180)));
         bullet.setCollidable(true);
         bullet = new Bullet(world, (int) getPosition().x, (int) getPosition().y,this);
         PrismaticJointDef defJoint = new PrismaticJointDef ();
