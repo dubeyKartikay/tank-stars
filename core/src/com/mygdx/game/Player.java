@@ -16,8 +16,8 @@ public class Player implements Serializable {
         this.tankIndex = tankIndex;
     }
 
-    public void initTank(World world){
-        this.setTank(new Tank(world,tankIndex));
+    public void initTank(World world,int x,int y){
+        this.setTank(new Tank(world,tankIndex, x, y));
     }
 
 
