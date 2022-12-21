@@ -170,11 +170,11 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor{
     public void update(){
         if (game.getPlayer1().getTank().getHealth() <=0){
             System.out.println("Player 1 loses");
-            game.setCurrScreen(new WinScreen(game,1));
+            game.setCurrScreen(new WinScreen(game,2));
         }
         if (game.getPlayer2().getTank().getHealth() <=0){
             System.out.println("Player 2 loses");
-            game.setCurrScreen(new WinScreen(game,2));
+            game.setCurrScreen(new WinScreen(game,1));
         }
     }
     public void applymovement(Body tank){

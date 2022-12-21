@@ -52,7 +52,7 @@ public class PlayScreen extends GameScreen {
     Texture img2;
     private ProgressBar powerbar;
     private Label anglelabel,currentplayerlable;
-    PlayScreen(final Game game) {
+    public PlayScreen(final Game game) {
         super(game);
 //        gameLoop =GameLoop.getInstance(game);
         gameLoop = new GameLoop(game);

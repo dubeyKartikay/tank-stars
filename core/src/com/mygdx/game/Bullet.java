@@ -4,7 +4,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
-public class Bullet {
+import java.io.Serializable;
+
+public class Bullet implements Serializable {
     private static Texture texture;
     private int damage = 10,speed,angle,fire_power,x,y;
 

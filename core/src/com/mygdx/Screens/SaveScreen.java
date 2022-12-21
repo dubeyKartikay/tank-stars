@@ -16,6 +16,8 @@ import com.mygdx.game.Game;
 import com.mygdx.game.Tank;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -94,24 +96,16 @@ public class SaveScreen extends GameScreen{
     }
     public void serialize(int idx) throws IOException {
         Game gamecurrent = getGame();
-        ObjectOutputStream oos = null;
-        try {
-            oos = new ObjectOutputStream(new FileOutputStream("serializefile.txt"));
-                gamecurrent.setSaveplace(idx);
-                Calendar now = Calendar.getInstance();
-                gamecurrent.setTime(new int[]{now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE)});
-                savedScreengames.add(idx, gamecurrent);
-                getGame().setSavedgames(savedScreengames);
-                oos.writeObject(gamecurrent);
+        try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(Paths.get("serializefile.txt")))) {
+            gamecurrent.setSaveplace(idx);
+            Calendar now = Calendar.getInstance();
+            gamecurrent.setTime(new int[]{now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE)});
+            savedScreengames.add(idx, gamecurrent);
+            getGame().setSavedgames(savedScreengames);
+            oos.writeObject(gamecurrent);
 
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } finally {
-            if(oos!=null){
-                oos.close();
-            }
         }
     }
     @Override

@@ -5,20 +5,24 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.mygdx.Screens.GameScreen;
 import com.mygdx.Screens.LoadingScreen;
 import com.mygdx.Screens.MainMenu;
+import com.mygdx.Screens.PlayScreen;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Game implements Serializable {
-    private Music bgMusic;
+    transient private Music bgMusic;
     private int saveplace;
     private ArrayList<Game>savedgames;
     private Player player1;
     private Player player2;
-    GameScreen currScreen;
+    transient GameScreen currScreen;
     private int[] time =new int[]{0,0};
     public ArrayList<Game> getSavedgames() {
         return savedgames;
+    }
+    public  void  addToSavedGames(int idx,Game game){
+        savedgames.add(idx,game);
     }
 
     public void setSavedgames(ArrayList<Game> savedgames) {
@@ -33,7 +37,7 @@ public class Game implements Serializable {
         return saveplace;
     }
 
-    private GameScreen overlayScreen;
+    transient private GameScreen overlayScreen;
     boolean isPaused = false;
 
     Game(){
@@ -42,6 +46,18 @@ public class Game implements Serializable {
         currScreen = new LoadingScreen(this);
         player1 = new Player();
         player2 = new Player();
+    }
+
+    Game(GameConfig gameConfig){
+        savedgames=new ArrayList<Game>(2);
+        bgMusic  = Gdx.audio.newMusic(Gdx.files.internal("Music/lofiINI.wav"));
+        currScreen = new PlayScreen(this);
+        player1 = new Player();
+        player2 = new Player();
+
+    }
+    public void initMusic(){
+        bgMusic  = Gdx.audio.newMusic(Gdx.files.internal("Music/lofiINI.wav"));
     }
     public void refreshgame(){
 

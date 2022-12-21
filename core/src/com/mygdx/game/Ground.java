@@ -1,4 +1,6 @@
 package com.mygdx.game;
 
-public class Ground {
+import java.io.Serializable;
+
+public class Ground implements Serializable {
 }
