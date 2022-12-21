@@ -71,6 +71,7 @@ public class Bullet {
         FixtureDef fixtureDef =  new FixtureDef();
         fixtureDef.shape =circleShape;
         body.createFixture(fixtureDef);
+        body.setUserData(this);
     }
 //    public Bullet(int damage, int speed, int angle, int fire_power, int x, int y) {
 //        this.damage = damage;

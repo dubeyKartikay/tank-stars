@@ -99,6 +99,7 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor  {
             spritebatch= new SpriteBatch();
             tankbatch=new SpriteBatch();
             world= new World(new Vector2(0,-10),true);
+            world.setContactListener(new CollisionHandler());
             game.getPlayer1().initTank(world,-55,20);
             game.getPlayer2().initTank(world,40,14);
             debugRenderer= new Box2DDebugRenderer();
@@ -196,7 +197,7 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor  {
         public void applymovement(Body tank){
 
             if(Gdx.input.isKeyPressed(Input.Keys.W)){
-                System.out.println("W is pressed");
+//                System.out.println("W is pressed");
                if(currentplayer==0){
                    game.getPlayer1().getTank().setAngle(game.getPlayer1().getTank().getAngle()+0.1);
                }
@@ -313,7 +314,7 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor  {
 //                }
 //            }
             tankbatch.end();
-            System.out.println("angle 1 : "+game.getPlayer1().getTank().getAngle());
+//            System.out.println("angle 1 : "+game.getPlayer1().getTank().getAngle());
             debugRenderer.render(world,orthographicCamera.combined);
             world.step(TIMESTEP,VECLOCITYIT,POSITIONIT);
 
@@ -336,10 +337,10 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor  {
         @Override
         public boolean keyDown(int keycode) {
             if(keycode==Input.Keys.D) {
-                System.out.println("D is pressed");
+//                System.out.println("D is pressed");
                 movetime[0]=System.currentTimeMillis()/50;
             }if(keycode==Input.Keys.A) {
-                System.out.println("D is pressed");
+//                System.out.println("D is pressed");
                 movetime[0]=System.currentTimeMillis()/50;
             }
             return true;
@@ -347,7 +348,7 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor  {
         @Override
         public boolean keyUp(int keycode) {
             if(keycode==Input.Keys.D) {
-                System.out.println("D is resleased");
+//                System.out.println("D is resleased");
                 movetime[1]=System.currentTimeMillis()/50;
                 if(currentplayer==0){
                     player1fuellvl-=Math.abs(movetime[1]-movetime[0]);
@@ -357,7 +358,7 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor  {
                 }
                 changeflag=1;
             }if(keycode==Input.Keys.A) {
-                System.out.println("D is resleased");
+//                System.out.println("D is resleased");
                 movetime[1]=System.currentTimeMillis()/50;
                 if(currentplayer==0){
                     player1fuellvl-=Math.abs(movetime[1]-movetime[0]);
