@@ -101,8 +101,10 @@ public class CollisionHandler implements ContactListener {
                     System.out.println(vec);
 //                    vec.scl((float) (b.getDamage()));
                     body.setLinearVelocity(vec);
-
-                    ((Tank)body.getUserData()).applyDamage(b.getDamage());
+                    if (distance < 1){
+                        distance = 1;
+                    }
+                    ((Tank)body.getUserData()).applyDamage((int) (b.getDamage()/distance*((Tank)body.getUserData()).getFirepower()));
                 }
             }
         }

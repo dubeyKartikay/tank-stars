@@ -13,7 +13,6 @@ public class Game implements Serializable {
     private Music bgMusic;
     private int saveplace;
     private ArrayList<Game>savedgames;
-    private Tank tank1,tank2;
     private Player player1;
     private Player player2;
     GameScreen currScreen;

@@ -84,8 +84,7 @@ public class PlayScreen extends GameScreen {
         powerbar.setWidth(270);
         powerbar.setPosition(525,30);
         stage.addActor(powerbar);
-        player1Health.setValue(40);
-        player1Health.setColor(Color.GREEN);
+
         pauseButton = new Button(pauseButtonSkin,"red");
         table.setPosition(10,310);
         stage.addListener(new InputListener()
@@ -126,7 +125,7 @@ public class PlayScreen extends GameScreen {
     //     int update_counter=0;
     @Override
     public void update(float delta) {
-
+        gameLoop.update();
         try {
 //            update_counter+=1;
 //            if(update_counter>100){
@@ -142,6 +141,8 @@ public class PlayScreen extends GameScreen {
         }
     }
     public void updateBars(){
+        player1Health.setValue(getGame().getPlayer1().getTank().getHealth());
+        player2Health.setValue(getGame().getPlayer2().getTank().getHealth());
         if(gameLoop.getCurrentplayer()==0){
             powerbar.setValue((float) getGame().getPlayer1().getTank().getFirepower());
             anglelabel.setText((int)getGame().getPlayer1().getTank().getAngle()+" degree");

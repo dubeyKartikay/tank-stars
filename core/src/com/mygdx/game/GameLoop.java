@@ -19,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.Constants;
+import com.mygdx.Screens.MainMenu;
 import com.mygdx.Screens.PauseMenu;
 import com.mygdx.Screens.PlayScreen;
 
@@ -166,7 +167,14 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor{
     }
 
     public void update(){
-        System.out.println("updating");
+        if (game.getPlayer1().getTank().getHealth() <=0){
+            System.out.println("Player 1 loses");
+            game.setCurrScreen(new MainMenu(game));
+        }
+        if (game.getPlayer2().getTank().getHealth() <=0){
+            System.out.println("Player 2 loses");
+            game.setCurrScreen(new MainMenu(game));
+        }
     }
     public void applymovement(Body tank){
         if(tank.getLinearVelocity().y>20){
