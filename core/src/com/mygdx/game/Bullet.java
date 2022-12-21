@@ -11,6 +11,14 @@ public class Bullet {
     private static Texture texture;
     private int damage,speed,angle,fire_power,x,y;
 
+    private boolean collidable = false;
+    public boolean isCollidable(){
+        return  collidable;
+    }
+
+    public void setCollidable(boolean val){
+        collidable = val;
+    }
     private Body body;
     public int getDamage() {
         return damage;

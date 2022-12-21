@@ -7,6 +7,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.joints.DistanceJoint;
 import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
+import com.badlogic.gdx.physics.box2d.joints.PrismaticJoint;
+import com.badlogic.gdx.physics.box2d.joints.PrismaticJointDef;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -23,7 +25,7 @@ public class Tank implements Serializable {
     private Bullet bullet;
     private Vector2 position=new Vector2();
 
-    private DistanceJoint bulletJoint;
+    private PrismaticJoint bulletJoint;
     public Tank(World world,int variety,int x,int y){
         this.world = world;
         angle=10;
@@ -55,11 +57,12 @@ public class Tank implements Serializable {
         getTankBody().createFixture(tankfixture1);
         sprite=getSprite(0,"L");
 
-        DistanceJointDef defJoint = new DistanceJointDef();
-        defJoint.length = 0;
-        defJoint.initialize(tankBody, bullet.getBody(), new Vector2(0,0), new Vector2(0, 0));
-        bulletJoint = (DistanceJoint) world.createJoint(defJoint);
+        PrismaticJointDef defJoint = new PrismaticJointDef ();
+        defJoint.initialize(tankBody, bullet.getBody(),new Vector2(0,0),new Vector2(0f, 1));
 
+        bulletJoint = (PrismaticJoint) world.createJoint(defJoint);
+        bulletJoint.setLimits(0,0);
+        bulletJoint.enableLimit(true);
     }
 
     public double getAngle() {
@@ -139,11 +142,14 @@ public class Tank implements Serializable {
     public void fire(){
         world.destroyJoint(bulletJoint);
         bullet.getBody().setLinearVelocity((float) (getFirepower()*Math.cos(getAngle())),(float) (getFirepower()*Math.sin(getAngle())));
+        bullet.setCollidable(true);
         bullet = new Bullet(world, (int) getPosition().x, (int) getPosition().y);
-        DistanceJointDef defJoint = new DistanceJointDef();
-        defJoint.length = 0;
-        defJoint.initialize(tankBody, bullet.getBody(), new Vector2(0,0), new Vector2(0f, 0));
-        bulletJoint = (DistanceJoint) world.createJoint(defJoint);
+        PrismaticJointDef defJoint = new PrismaticJointDef ();
+        defJoint.initialize(tankBody, bullet.getBody(),new Vector2(0,0),new Vector2(0f, 1));
+
+        bulletJoint = (PrismaticJoint) world.createJoint(defJoint);
+        bulletJoint.setLimits(0,0);
+        bulletJoint.enableLimit(true);
     }
 
     public Vector2 getPosition() {

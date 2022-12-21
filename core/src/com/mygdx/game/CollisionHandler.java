@@ -23,11 +23,14 @@ public class CollisionHandler implements ContactListener {
         if (contact.getFixtureA().getBody().getUserData() == null || contact.getFixtureB().getBody().getUserData() == null){
             return -1;
         }
-        System.out.println("A" + contact.getFixtureA().getBody().getUserData().getClass());
-        System.out.println("B" + contact.getFixtureB().getBody().getUserData().getClass());
+//        System.out.println("A" + contact.getFixtureA().getBody().getUserData().getClass());
+//        System.out.println("B" + contact.getFixtureB().getBody().getUserData().getClass());
         if (contact.getFixtureA().getBody().getUserData().getClass() == Bullet.class && contact.getFixtureB().getBody().getUserData().getClass() == Bullet.class ){
 
             return 0;
+        }else if (contact.getFixtureA().getBody().getUserData().getClass() == Bullet.class && contact.getFixtureB().getBody().getUserData().getClass() == Tank.class ){
+
+            return 1;
         }
         return -1;
     }
@@ -47,6 +50,12 @@ public class CollisionHandler implements ContactListener {
             case 0:
                 contact.setEnabled(false);
                 break;
+            case 1:
+                Object b = contact.getFixtureA().getBody().getUserData().getClass() == Bullet.class ? contact.getFixtureA().getBody().getUserData():contact.getFixtureB().getBody().getUserData();
+
+                if (!((Bullet) b).isCollidable()){
+                    contact.setEnabled(false);
+                }
         }
     }
 
