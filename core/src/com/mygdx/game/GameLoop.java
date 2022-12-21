@@ -192,7 +192,7 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor{
                 game.getPlayer1().getTank().setAngle(game.getPlayer1().getTank().getAngle()+1);
             }
             else{
-                game.getPlayer2().getTank().setAngle(game.getPlayer2().getTank().getAngle()+1);
+                game.getPlayer2().getTank().setAngle(game.getPlayer2().getTank().getAngle()-1);
             }
 
         }if(Gdx.input.isKeyPressed(Input.Keys.S)){
@@ -200,7 +200,7 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor{
                 game.getPlayer1().getTank().setAngle(game.getPlayer1().getTank().getAngle()-1);
             }
             else{
-                game.getPlayer2().getTank().setAngle(game.getPlayer2().getTank().getAngle()-1);
+                game.getPlayer2().getTank().setAngle(game.getPlayer2().getTank().getAngle()+1);
             }
         }
         if(Gdx.input.isKeyPressed(Input.Keys.A) ){

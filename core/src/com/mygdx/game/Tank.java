@@ -29,8 +29,13 @@ public class Tank implements Serializable {
     }
     private PrismaticJoint bulletJoint;
     public Tank(World world,int variety,String side,int x,int y){
+        if(side== "L"){
+            setAngle(0);
+        }if(side == "R"){
+            setAngle(180);
+        }
         this.world = world;
-        angle=10;
+//        angle=10;
         firepower=50;
         getPosition().x=x;
         getPosition().y=y;
