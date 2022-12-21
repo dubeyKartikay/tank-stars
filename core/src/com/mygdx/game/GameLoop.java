@@ -194,6 +194,7 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor  {
             System.out.println("updating");
         }
         public void applymovement(Body tank){
+
             if(Gdx.input.isKeyPressed(Input.Keys.W)){
                 System.out.println("W is pressed");
                if(currentplayer==0){
@@ -226,17 +227,35 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor  {
             }
             if(Gdx.input.isKeyPressed(Input.Keys.W)){
                 if(currentplayer==0){
-                    game.getPlayer1().getTank().setAngle(game.getPlayer1().getTank().getAngle()+0.01);
+                    game.getPlayer1().getTank().setAngle(game.getPlayer1().getTank().getAngle()+0.1);
                 }
                 else{
-                    game.getPlayer2().getTank().setAngle(game.getPlayer2().getTank().getAngle()+0.01);
+                    game.getPlayer2().getTank().setAngle(game.getPlayer2().getTank().getAngle()+0.1);
                 }
             }if(Gdx.input.isKeyPressed(Input.Keys.NUM_2)){
                 if(currentplayer==0){
-                    game.getPlayer1().getTank().setAngle(game.getPlayer1().getTank().getAngle()+0.01);
+                    game.getPlayer1().getTank().setFirepower(game.getPlayer1().getTank().getAngle()+1);
                 }
                 else{
-                    game.getPlayer2().getTank().setAngle(game.getPlayer2().getTank().getAngle()+0.01);
+                    game.getPlayer2().getTank().setFirepower(game.getPlayer2().getTank().getAngle()+1);
+                }
+            }
+            if(Gdx.input.isKeyPressed(Input.Keys.NUM_1)){
+                if(currentplayer==0){
+                    game.getPlayer1().getTank().setFirepower(game.getPlayer1().getTank().getAngle()-1);
+                }
+                else{
+                    game.getPlayer2().getTank().setFirepower(game.getPlayer2().getTank().getAngle()-1);
+                }
+            }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.F)){
+                tank.setLinearVelocity(0,0);
+                if(currentplayer==0){
+
+                    game.getPlayer1().getTank().fire();
+                }
+                else{
+                    game.getPlayer2().getTank().fire();
                 }
             }
 
@@ -251,6 +270,8 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor  {
         }
 
         public void movement(){
+            game.getPlayer1().getTank().getPosition().set(tankbody1.getPosition());
+            game.getPlayer2().getTank().getPosition().set(tankbody2.getPosition());
             if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
                 game.setPaused(true);
                 game.setOverlayScreen(new PauseMenu(game));
@@ -292,7 +313,7 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor  {
 //                }
 //            }
             tankbatch.end();
-            System.out.println("angle1"+game.getPlayer1().getTank().getAngle());
+            System.out.println("angle 1 : "+game.getPlayer1().getTank().getAngle());
             debugRenderer.render(world,orthographicCamera.combined);
             world.step(TIMESTEP,VECLOCITYIT,POSITIONIT);
 

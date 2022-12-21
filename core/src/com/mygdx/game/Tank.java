@@ -3,9 +3,10 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.joints.DistanceJoint;
+import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -17,27 +18,32 @@ public class Tank implements Serializable {
     private PowerUps powerups;
     private Sprite sprite;
     private Body tankBody;
+
+    private World world;
+    private Bullet bullet;
     private Vector2 position=new Vector2();
+
+    private DistanceJoint bulletJoint;
     public Tank(World world,int variety,int x,int y){
+        this.world = world;
         angle=10;
         firepower=50;
-        position.x=x;
-        position.y=y;
+        getPosition().x=x;
+        getPosition().y=y;
         this.health=100;
         powerups=new PowerUps();
         BodyDef tank1=new BodyDef();
         tank1.type= BodyDef.BodyType.DynamicBody;
+
         tank1.position.set(x,y);
+        bullet = new Bullet(world,x,y);
+
         FixtureDef tankfixture1=new FixtureDef();
         CircleShape circleShape= new CircleShape();
         PolygonShape polygonShape=new PolygonShape();
         polygonShape.setAsBox(3,3);
         tankfixture1.shape=polygonShape;
         tankBody=world.createBody(tank1);
-        tankBody.createFixture(tankfixture1);
-        circleShape.setRadius(2f);
-        circleShape.setPosition(new Vector2(0,5));
-        tankfixture1.shape=circleShape;
         tankBody.createFixture(tankfixture1);
         circleShape.setRadius(1.5f);
         circleShape.setPosition(new Vector2(3,-3));
@@ -48,6 +54,11 @@ public class Tank implements Serializable {
         tankBody.createFixture(tankfixture1);
         getTankBody().createFixture(tankfixture1);
         sprite=getSprite(0,"L");
+
+        DistanceJointDef defJoint = new DistanceJointDef();
+        defJoint.length = 0;
+        defJoint.initialize(tankBody, bullet.getBody(), new Vector2(0,0), new Vector2(0, 0));
+        bulletJoint = (DistanceJoint) world.createJoint(defJoint);
 
     }
 
@@ -122,6 +133,25 @@ public class Tank implements Serializable {
 
     public void setTankBody(Body tankBody) {
         this.tankBody = tankBody;
+    }
+
+
+    public void fire(){
+        world.destroyJoint(bulletJoint);
+        bullet.getBody().setLinearVelocity((float) (getFirepower()*Math.cos(getAngle())),(float) (getFirepower()*Math.sin(getAngle())));
+        bullet = new Bullet(world, (int) getPosition().x, (int) getPosition().y);
+        DistanceJointDef defJoint = new DistanceJointDef();
+        defJoint.length = 0;
+        defJoint.initialize(tankBody, bullet.getBody(), new Vector2(0,0), new Vector2(0f, 0));
+        bulletJoint = (DistanceJoint) world.createJoint(defJoint);
+    }
+
+    public Vector2 getPosition() {
+        return position;
+    }
+
+    public void setPosition(Vector2 position) {
+        this.position = position;
     }
 //    public void refill()
 //    public void
