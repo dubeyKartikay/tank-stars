@@ -286,7 +286,6 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor  {
 //            for(Body body :tmpbodies){
 //                if(body.getUserData()!=null && body.getUserData() instanceof Sprite){
                     Sprite flagsprite1=game.getPlayer1().getTank().getSprite(0,"L");
-                    System.out.println(tankbody1.getPosition().x+" "+tankbody1.getPosition().y);
                     flagsprite1.setPosition(tankbody1.getPosition().x-flagsprite1.getWidth()/2,tankbody1.getPosition().y-flagsprite1.getHeight()/2);
 //                    flagsprite1.setSize(100,100);
 //                    flagsprite1.draw(tankbatch);
