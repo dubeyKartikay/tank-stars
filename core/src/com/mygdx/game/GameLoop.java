@@ -105,7 +105,7 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor{
         currentplayer=0;
         spritebatch= new SpriteBatch();
         tankbatch=new SpriteBatch();
-        world= new World(new Vector2(0,-10),true);
+//        world= new World(new Vector2(0,-10),true);
         world= new World(new Vector2(0,-50),true);
         world.setContactListener(new CollisionHandler(bulletDeletionList));
         game.getPlayer1().initTank(world,-55,20);
@@ -132,7 +132,9 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor{
         //        slot1 = new TextButton("slot1",mySkin);
         //shape
         ChainShape chainShape=new ChainShape();
-        chainShape.createChain(new Vector2[]{new Vector2(-136,100),new Vector2(-136,14),
+        chainShape.createChain(new Vector2[]{
+                new Vector2(-136,100),
+                new Vector2(-136,14),
                 new Vector2(-130, 14),
                 new Vector2(-107, -12),
                 new Vector2(-79, -12),
@@ -145,7 +147,8 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor{
                 new Vector2(80, -7),
                 new Vector2(97,-7),
                 new Vector2(112,-23),
-                new Vector2(136,-23),new Vector2(136,200)
+                new Vector2(136,-23),
+                new Vector2(136,200)
         });
         tankfixture1.shape=chainShape;
         tankfixture1.friction=.5f;
@@ -166,12 +169,15 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor{
         System.out.println("updating");
     }
     public void applymovement(Body tank){
-//        if(currentplayer==0){
-//            System.out.println(game.getPlayer1().getTank().getAngle());
-//        }
-//        else{
-//            System.out.println(game.getPlayer2().getTank().getAngle());
-//        }
+        if(tank.getLinearVelocity().y>20){
+            tank.setLinearVelocity(tank.getLinearVelocity().x,5);
+        }
+        if(currentplayer==0){
+            System.out.println(game.getPlayer1().getTank().getTankBody().getLinearVelocity());
+        }
+        else{
+            System.out.println(game.getPlayer2().getTank().getTankBody().getLinearVelocity());
+        }
         if(Gdx.input.isKeyPressed(Input.Keys.W)){
             // System.out.println("W is pressed");
             if(currentplayer==0){
@@ -189,42 +195,56 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor{
                 game.getPlayer2().getTank().setAngle(game.getPlayer2().getTank().getAngle()-1);
             }
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.A) && ((Tank)tank.getUserData()).isTouchingGround()){
+        if(Gdx.input.isKeyPressed(Input.Keys.A) ){
 
             if(currentplayer ==0 && player1fuellvl>=0){
-                if(tank.getLinearVelocity().x > -20) {
-                    tank.setLinearVelocity((float) (tank.getLinearVelocity().x - 1), (float) (tank.getLinearVelocity().y));
+                if(tank.getLinearVelocity().x > -30) {
+//                    tank.applyForceToCenter(-50000,0,true);
+//                    tank.setLinearVelocity((float) (-30), (float) (tank.getLinearVelocity().y));
+                    tank.applyForceToCenter(-200*tank.getMass(),0,true);
                 }
             } if(currentplayer ==1 && player2fuellvl>=0){
-                if(tank.getLinearVelocity().x > -20) {
-                    tank.setLinearVelocity((float) (tank.getLinearVelocity().x - 1), (float) (tank.getLinearVelocity().y));
+                if(tank.getLinearVelocity().x > -30) {
+//                    tank.setLinearVelocity((float) (-30), (float) (tank.getLinearVelocity().y));
+                    tank.applyForceToCenter(-200*tank.getMass(),0,true);
+//                    t
                 }
             }
-        }if(Gdx.input.isKeyPressed(Input.Keys.D) && ((Tank)tank.getUserData()).isTouchingGround()){
+        }if(Gdx.input.isKeyPressed(Input.Keys.D) ){
             if(currentplayer ==0 && player1fuellvl>=0){
-                if(tank.getLinearVelocity().x < 20) {
-                    tank.setLinearVelocity((float) (tank.getLinearVelocity().x + 1), (float) (tank.getLinearVelocity().y));
+                if(tank.getLinearVelocity().x < 30) {
+                    tank.applyForceToCenter(+200*tank.getMass(),0,true);
+//                    tank.setLinearVelocity((float) (30), (float) (tank.getLinearVelocity().y));
                 }
             } if(currentplayer ==1 && player2fuellvl>=0){
-                if(tank.getLinearVelocity().x < 20) {
-                    tank.setLinearVelocity((float) (tank.getLinearVelocity().x + 1), (float) (tank.getLinearVelocity().y));
+                if(tank.getLinearVelocity().x <30) {
+                    tank.applyForceToCenter(+200*tank.getMass(),0,true);
+//                    tank.setLinearVelocity((float) (30), (float) (tank.getLinearVelocity().y));
                 }
             }
         }
         if(Gdx.input.isKeyPressed(Input.Keys.NUM_2)){
             if(currentplayer==0){
-                game.getPlayer1().getTank().setFirepower(game.getPlayer1().getTank().getFirepower()+1);
+                if (game.getPlayer1().getTank().getFirepower()<100) {
+                    game.getPlayer1().getTank().setFirepower(game.getPlayer1().getTank().getFirepower() + 1);
+                }
             }
             else{
-                game.getPlayer2().getTank().setFirepower(game.getPlayer2().getTank().getFirepower()+1);
+                if (game.getPlayer2().getTank().getFirepower()<100) {
+                    game.getPlayer2().getTank().setFirepower(game.getPlayer2().getTank().getFirepower() + 1);
+                }
             }
         }
         if(Gdx.input.isKeyPressed(Input.Keys.NUM_1)){
             if(currentplayer==0){
-                game.getPlayer1().getTank().setFirepower(game.getPlayer1().getTank().getFirepower()-1);
+                if (game.getPlayer1().getTank().getFirepower()>0) {
+                    game.getPlayer1().getTank().setFirepower(game.getPlayer1().getTank().getFirepower() - 1);
+                }
             }
             else{
-                game.getPlayer2().getTank().setFirepower(game.getPlayer2().getTank().getFirepower()-1);
+                if (game.getPlayer2().getTank().getFirepower()>0) {
+                    game.getPlayer2().getTank().setFirepower(game.getPlayer2().getTank().getFirepower() - 1);
+                }
             }
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F)){
@@ -237,6 +257,8 @@ public class GameLoop  extends ApplicationAdapter implements InputProcessor{
                 game.getPlayer2().getTank().fire();
             }
         }
+
+
 
 
     }

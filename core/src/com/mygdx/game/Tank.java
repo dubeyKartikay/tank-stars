@@ -47,16 +47,19 @@ public class Tank implements Serializable {
         PolygonShape polygonShape=new PolygonShape();
         polygonShape.setAsBox(3,3);
         tankfixture1.shape=polygonShape;
-        tankfixture1.density=100;
+        tankfixture1.density =10;
         tankBody=world.createBody(tank1);
         tankBody.createFixture(tankfixture1);
         circleShape.setRadius(1.5f);
         circleShape.setPosition(new Vector2(3,-3));
         tankfixture1.shape=circleShape;
+        tankfixture1.restitution=0;
+
         tankBody.createFixture(tankfixture1);
         circleShape.setPosition(new Vector2(-3,-3));
         tankfixture1.shape=circleShape;
         tankBody.createFixture(tankfixture1);
+        tankfixture1.restitution=0;
         getTankBody().createFixture(tankfixture1);
 //        sprite=getSprite(0,"L");
         tankBody.setUserData(this);

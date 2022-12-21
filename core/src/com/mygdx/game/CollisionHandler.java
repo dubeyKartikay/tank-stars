@@ -19,14 +19,14 @@ public class CollisionHandler implements ContactListener {
     public void beginContact(Contact contact) {
 //        System.out.println("Collision happened");
         int res = classifyCollision(contact);
-        if (res >= 1 && res !=3){
+        if (res >= 1){
             bulletExplode(contact,res);
         }
-        if (res == 3){
-            System.out.println("TAnk came in contact");
-
-            setTankTouchingGround(contact,true);
-        }
+//        if (res == 3){
+//            System.out.println("TAnk came in contact");
+//
+//            setTankTouchingGround(contact,true);
+//        }
 
     }
 
@@ -55,9 +55,9 @@ public class CollisionHandler implements ContactListener {
         }else if ((o1.getClass() == Bullet.class && o2.getClass() == Ground.class) || (o1.getClass() == Ground.class && o2.getClass() == Bullet.class)){
             return 2;
         }
-        else if ((o1.getClass() == Tank.class && o2.getClass() == Ground.class) || (o1.getClass() == Ground.class && o2.getClass() == Tank.class)){
-            return 3;
-        }
+//        else if ((o1.getClass() == Tank.class && o2.getClass() == Ground.class) || (o1.getClass() == Ground.class && o2.getClass() == Tank.class)){
+//            return 3;
+//        }
         return -1;
     }
 
@@ -117,11 +117,11 @@ public class CollisionHandler implements ContactListener {
     }
     @Override
     public void endContact(Contact contact) {
-        int res = classifyCollision(contact);
-        if (res == 3){
-            System.out.println("TAnk ended contact");
-            setTankTouchingGround(contact,false);
-        }
+//        int res = classifyCollision(contact);
+//        if (res == 3){
+//            System.out.println("TAnk ended contact");
+//            setTankTouchingGround(contact,false);
+//        }
     }
 
     @Override
