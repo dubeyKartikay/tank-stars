@@ -27,6 +27,7 @@ import com.mygdx.Screens.WinScreen;
 import java.util.ArrayList;
 
 public class GameLoop  extends ApplicationAdapter implements InputProcessor{
+
     private Game game;
     private SpriteBatch spriteBatch;
     private Texture texture1,texture2;

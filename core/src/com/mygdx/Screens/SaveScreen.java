@@ -96,16 +96,26 @@ public class SaveScreen extends GameScreen{
     }
     public void serialize(int idx) throws IOException {
         Game gamecurrent = getGame();
-        try (ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(Paths.get("serializefile.txt")))) {
+        ObjectOutputStream oos = null;
+        try {
+            oos = new ObjectOutputStream(new FileOutputStream("serializefile.txt"));
             gamecurrent.setSaveplace(idx);
             Calendar now = Calendar.getInstance();
             gamecurrent.setTime(new int[]{now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE)});
-            savedScreengames.add(idx, gamecurrent);
-            getGame().setSavedgames(savedScreengames);
-            oos.writeObject(gamecurrent);
+//
+            Tank t1=gamecurrent.getPlayer1().getTank();
+            Tank t2=gamecurrent.getPlayer2().getTank();
+            oos.writeObject(getGame());
+//                oos.writeObject(new Game(t1.getHealth(),t2.getHealth(),t1.getPosition().x,t1.getPosition().y,t2.getPosition().x,t2.getPosition().y,gamecurrent.getPlayer1().getTankIndex(), gamecurrent.getPlayer2().getTankIndex()));
 
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            if(oos!=null){
+                oos.close();
+            }
         }
     }
     @Override

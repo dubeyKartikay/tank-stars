@@ -8,6 +8,19 @@ import com.badlogic.gdx.utils.ScreenUtils;
 public class Main extends ApplicationAdapter {
 
 	Game game;
+
+	static Main main;
+
+	public static Main getInstance(){
+		if (main==null){
+			main = new Main();
+			return main;
+		}
+		else {
+			return main;
+		}
+	}
+	private Main(){}
 	@Override
 	public void create () {
 

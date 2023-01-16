@@ -104,7 +104,7 @@ public class CollisionHandler implements ContactListener {
                     if (distance < 1){
                         distance = 1;
                     }
-                    ((Tank)body.getUserData()).applyDamage((int) (b.getDamage()/distance*((Tank)body.getUserData()).getFirepower()));
+                    ((Tank)body.getUserData()).applyDamage((int) (b.getDamage()/distance*((Tank)body.getUserData()).getFirepower())/10);
                 }
             }
         }

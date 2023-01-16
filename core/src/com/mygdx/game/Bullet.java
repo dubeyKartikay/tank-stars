@@ -69,7 +69,7 @@ public class Bullet implements Serializable {
     public void setY(int y) {
         this.y = y;
     }
-    Bullet(World world, int x, int y,Tank tank){
+    public Bullet(World world, int x, int y, Tank tank){
         BodyDef bodyDef = new BodyDef();
         bodyDef.position.set(x,y);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
